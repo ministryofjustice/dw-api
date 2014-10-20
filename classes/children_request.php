@@ -24,7 +24,8 @@ class children_request {
         // Subpages Start
         $subpages = new WP_Query(array(
             'post_parent' => $pageid,
-            'post_type' => array('page')
+            'post_type' => array('page'),
+            'posts_per_page' => -1
         ));
         if ($subpages->have_posts()) {
             while ($subpages->have_posts()) {
