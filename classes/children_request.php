@@ -61,7 +61,7 @@ class children_request {
         // Subpage Excerpt
         $subpage_array['excerpt'] = get_the_excerpt();
         // Subpage Order
-        $subpage_array['order'] = $subpage->menu_order;
+        $subpage_array['order'] = $subpage->posts[0]->menu_order;
         // Subpage End
         return $subpage_array;
     }
