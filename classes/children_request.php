@@ -59,6 +59,8 @@ class children_request {
         $subpage_array['title'] = get_the_title();
         // Subpage URL
         $subpage_array['url'] = get_the_permalink();
+        // Subpage Slug
+        $subpage_array['slug'] = $subpage->posts[0]->post_name;
         // Subpage Excerpt
         $subpage_array['excerpt'] = get_the_excerpt();
         // Subpage Order
