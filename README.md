@@ -24,7 +24,10 @@ You can use the plugin within by PHP as follows:
 ##Release history
 
 0.1   - initial release with _children_ endpoint
+
 0.2   - search API added
+
 0.3   - added urlParams and totalResults to search API; handles '-' in query URL
+
 0.3.1 - corrected issue when api_request class instantiated directly in PHP
-		(note that api_request now takes array as argument which mirrors API args)
+	(note that api_request now takes array as argument which mirrors API args)
