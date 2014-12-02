@@ -4,8 +4,16 @@
   Plugin Name: PageAPI
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.1
+  Version: 0.3.1
   Author URI: http://sparkdevelopment.co.uk
+
+  Changelog
+  ---------
+  0.1   - initial release - children request class added
+  0.2   - search request class added; api_request class added
+  0.3   - added urlParams and totalResults to search API; handles '-' in query URL
+  0.3.1 - corrected issue when api_request class instantiated directly in PHP
+          (note that api_request now takes array as argument which mirrors API args)
  */
 
 if (!defined('ABSPATH')) {
@@ -19,7 +27,7 @@ if (!class_exists('PageAPI')) {
         /**
          * @var string
          */
-        public $version = '0.1';
+        public $version = '0.2';
 
         /**
          * Define PageAPI constants
@@ -41,7 +49,9 @@ if (!class_exists('PageAPI')) {
          */
         private function plugin_classes() {
             return array(
-                'pageapi_children_request' => PAGEAPI_PATH . 'classes/children_request.php',
+                'api_request' => PAGEAPI_PATH . 'classes/api_request.php',
+                'children_request' => PAGEAPI_PATH . 'classes/children_request.php',
+                'search_request' => PAGEAPI_PATH . 'classes/search_request.php',
             );
         }
 
@@ -55,12 +65,40 @@ if (!class_exists('PageAPI')) {
             add_action('wp', array(&$this, 'process_api_request'), 5);
         }
 
+        /**
+        * Set up rewrite rules in WordPress
+        *
+        * @since 1.0
+        */
         public function setup_api_rewrites() {
-            add_rewrite_rule(PAGEAPI_ROOT . '/(.+)/(.+)/*', 'index.php?api_action=$matches[1]&pageid=$matches[2]', 'top');
-            add_rewrite_tag('%api_action%', '([^&]+)');
-            add_rewrite_tag('%pageid%', '([^&]+)');
+          $total_params=0;
+          foreach ($this->plugin_classes() as $id => $path) {
+            if (class_exists($id)) {
+              // $temp_class = new $id(true);
+              if($total_params<count($id::$params)) {
+                $total_params = count($id::$params);
+              }
+            }
+          }
+          $rewrite_string = 'index.php?api_action=$matches[1]';
+          $rewrite_pattern = '/([^/]+)';
+          for($i=1;$i<=$total_params;$i++) {
+            $rewrite_string .= '&param' . ($i) . '=$matches[' . ($i+1) . ']';
+            $rewrite_pattern .= '/?([^/]*)?';
+            add_rewrite_tag('%param' . ($i) . '%', '([^&]+)');
+          }
+
+          add_rewrite_rule(PAGEAPI_ROOT . $rewrite_pattern . '/?', $rewrite_string, 'top');
+          add_rewrite_tag('%api_action%', '([^&]+)');
+
+          // global $wp_rewrite;var_dump($wp_rewrite);
         }
 
+        /**
+        * Reset permalinks in WordPress
+        *
+        * @since 1.0
+        */
         public function flush_api_permalinks() {
             global $wp_query;
 
@@ -72,16 +110,20 @@ if (!class_exists('PageAPI')) {
             }
         }
 
+        /**
+        * Parses endpoint and processes API request
+        *
+        * @since 1.0
+        */
         public function process_api_request() {
             global $wp_query;
 
             // Get custom URL parameters
             $api_action = get_query_var('api_action');
-            $pageid = get_query_var('pageid');
 
-            if ($api_action !== '' && $pageid !== '') {
+            if ($api_action !== '') {
                 $request_class = $api_action . "_request";
-                $results = new $request_class($pageid);
+                $results = new $request_class();
                 $this->output_json($results);
                 exit;
             }
@@ -103,9 +145,12 @@ if (!class_exists('PageAPI')) {
 
         /**
          * Outputs JSON from results array
+         *
+         * @since 1.0
          */
         function output_json($json_array) {
-            echo json_encode($json_array->results_array);
+          header('Content-Type: application/json');
+          echo json_encode($json_array->results_array);
         }
 
     }

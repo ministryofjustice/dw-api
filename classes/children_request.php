@@ -6,38 +6,41 @@
  * @author ryanajarrett
  * @since 0.1
  */
-class children_request {
+class children_request extends api_request {
 
-    public $results_array = array();
+    public static $params = array('pageid');
 
-    function __construct($pageid = 0) {
-        // Get page details
-        $submenu_page = new WP_Query(array(
-            'p' => $pageid,
-            'post_type' => array('page')
-        ));
-        $submenu_page->the_post();
+    function __construct($param_array) {
+            // Setup vars from url params
+            $this->set_params($param_array);
+            // Get page details
+            $submenu_page = new WP_Query(array(
+                'p' => $this->data['pageid'],
+                'post_type' => array('page')
+            ));
+            $submenu_page->the_post();
 
-        // Start JSON
-        // Page name
-        $this->results_array['title'] = get_the_title();
-        // Subpages Start
-        $subpages = new WP_Query(array(
-            'post_parent' => $pageid,
-            'post_type' => array('page'),
-            'posts_per_page' => -1
-        ));
-        if ($subpages->have_posts()) {
-            while ($subpages->have_posts()) {
-                $subpages->the_post();
-                $this->results_array['items'][] = $this->build_subpage(get_the_ID());
-            }
-        } else {
-            $this->results_array['items'] = array();
-        } // Subpages End
-        // End JSON
+            // Start JSON
+                // Page name
+                    $this->results_array['title'] = get_the_title();
+                // Subpages Start
+                    $subpages = new WP_Query(array(
+                        'post_parent' => $this->data['pageid'],
+                        'post_type' => array('page'),
+                        'posts_per_page' => -1
+                    ));
+                    if ($subpages->have_posts()) {
+                        while ($subpages->have_posts()) {
+                            $subpages->the_post();
+                            $this->results_array['items'][] = $this->build_subpage(get_the_ID());
+                        }
+                    } else {
+                        $this->results_array['items'] = array();
+                    }
+                // Subpages End
+            // End JSON
 
-        return($this->results_array);
+            return($this->results_array);
     }
 
     /**
