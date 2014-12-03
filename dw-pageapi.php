@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Plugin Name: PageAPI
+  Plugin Name: dw-PageAPI
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
   Version: 0.3.1
@@ -27,7 +27,7 @@ if (!class_exists('PageAPI')) {
         /**
          * @var string
          */
-        public $version = '0.2';
+        public $version = '0.3.1';
 
         /**
          * Define PageAPI constants
