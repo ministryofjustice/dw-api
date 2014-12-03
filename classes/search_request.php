@@ -10,9 +10,13 @@ class search_request extends api_request {
 
 	public static $params = array('type','category','keywords','initial','page','per_page');
 
-	function __construct() {
+    // Default search order parameters
+    protected $search_order     = 'ASC';
+    protected $search_orderby   = 'title';
+
+	function __construct($param_array) {
         // Setup vars from url params
-        $this->set_params();
+        $this->set_params($param_array);
         // Check search type - if not page or doc, default to page
         if(!in_array($this->data['type'],array("page","doc"),true)) {
             $this->data['type'] = "page";
@@ -53,8 +57,8 @@ class search_request extends api_request {
             'paged'             =>  $paged,
             'posts_per_page'    =>  $per_page,
             // Sorting
-            'order'             => 'ASC',
-            'orderby'           => 'title',
+            'order'             =>  $this->search_order,
+            'orderby'           =>  $this->search_orderby,
             // Filters
             'post_type'         =>  $this->data['type'],
             'category_name'     =>  $this->data['category'],
@@ -66,64 +70,18 @@ class search_request extends api_request {
         // Get matching results
         $results = new WP_Query($args);
 
-        if($results->have_posts()) {
-
-            // Start JSON
-            // URL parameters
-            // $this->results_array[]['url_params'] = array();
-            foreach ($this::$params as $param) {
-                $this->results_array['urlParams'][$param] = $this->data[$param];
-            }
-
-            // Total posts
-            $this->results_array['totalResults'] = $results->found_posts;
-
-            // Loop through alphabet
-            $result_letters = range('A', 'Z');
-            global $post;
-
-            // Get first letter
-            $result_letter = current($result_letters);
-            $letter_array = array();
-            $letter_array['initial'] = $result_letter;
-            $letter_array['results'] = array();
-            // Get first post
-            $results->the_post();
-            $last_post = false;
-            do {
-                if($result_letter==strtoupper(substr(get_the_title(),0,1)) && !$last_post) {
-                    $letter_array['results'][] = array(
-                        // Page Title
-                        'title' =>  get_the_title(),
-                        // Page URL 
-                        'url'   =>  get_the_permalink(),
-                        // Page Slug
-                        'slug'  =>  $post->post_name,
-                        // Page Excerpt
-                        'excerpt'   =>  get_the_excerpt()
-                    );
-                    if($results->current_post+1 != $results->post_count) {
-                        $results->the_post();
-                    } else {
-                        $last_post = true;
-                    }
-                } else {
-                    // Store current result
-                    $this->results_array['data'][] = $letter_array;
-                    // Get next letter
-                    $result_letter = next($result_letters);
-                    // Set up new result array
-                    $letter_array = array(
-                        'initial' => $result_letter,
-                        'results' => array()
-                    );
-                }
-            } while ($result_letter!=="Z" || ($results->current_post+1 != $results->post_count));
-            // Store final result
-            $this->results_array['data'][] = $letter_array;
-        }
+        $this::generate_json($results);
 
         return($this->results_array);
 	}
+
+    function generate_json() {
+        $this->results_array = array(
+            "status"    => 401,
+            "message"   => "Endpoint not valid",
+            "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+        );
+    }
+
 }
 ?>

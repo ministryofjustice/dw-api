@@ -31,3 +31,5 @@ You can use the plugin within by PHP as follows:
 
 0.3.1 - corrected issue when api_request class instantiated directly in PHP
 	(note that api_request now takes array as argument which mirrors API args)
+
+0.4   - added az_request and refactored search_request

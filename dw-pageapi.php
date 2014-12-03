@@ -14,6 +14,7 @@
   0.3   - added urlParams and totalResults to search API; handles '-' in query URL
   0.3.1 - corrected issue when api_request class instantiated directly in PHP
           (note that api_request now takes array as argument which mirrors API args)
+  0.4   - added az_request and refactored search_request
  */
 
 if (!defined('ABSPATH')) {
@@ -27,7 +28,7 @@ if (!class_exists('PageAPI')) {
         /**
          * @var string
          */
-        public $version = '0.3.1';
+        public $version = '0.4';
 
         /**
          * Define PageAPI constants
@@ -50,8 +51,9 @@ if (!class_exists('PageAPI')) {
         private function plugin_classes() {
             return array(
                 'api_request' => PAGEAPI_PATH . 'classes/api_request.php',
-                'children_request' => PAGEAPI_PATH . 'classes/children_request.php',
                 'search_request' => PAGEAPI_PATH . 'classes/search_request.php',
+                'children_request' => PAGEAPI_PATH . 'classes/children_request.php',
+                'az_request' => PAGEAPI_PATH . 'classes/az_request.php',
             );
         }
 
@@ -123,7 +125,7 @@ if (!class_exists('PageAPI')) {
 
             if ($api_action !== '') {
                 $request_class = $api_action . "_request";
-                $results = new $request_class();
+                $results = new $request_class(array());
                 $this->output_json($results);
                 exit;
             }
@@ -149,6 +151,10 @@ if (!class_exists('PageAPI')) {
          * @since 1.0
          */
         function output_json($json_array) {
+          $status = $json_array->results_array['status'];
+          if (!is_null($status)) {
+            http_response_code($status);
+          }
           header('Content-Type: application/json');
           echo json_encode($json_array->results_array);
         }
