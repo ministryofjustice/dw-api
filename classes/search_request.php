@@ -14,7 +14,7 @@ class search_request extends api_request {
     protected $search_order     = 'ASC';
     protected $search_orderby   = 'title';
 
-	function __construct($param_array) {
+	function __construct($param_array = array()) {
         // Setup vars from url params
         $this->set_params($param_array);
         // Check search type - if not page or doc, default to page

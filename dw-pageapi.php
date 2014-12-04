@@ -15,6 +15,7 @@
   0.3.1 - corrected issue when api_request class instantiated directly in PHP
           (note that api_request now takes array as argument which mirrors API args)
   0.4   - added az_request and refactored search_request
+  0.5   - added news_request
  */
 
 if (!defined('ABSPATH')) {
@@ -28,7 +29,7 @@ if (!class_exists('PageAPI')) {
         /**
          * @var string
          */
-        public $version = '0.4';
+        public $version = '0.5';
 
         /**
          * Define PageAPI constants
@@ -54,6 +55,7 @@ if (!class_exists('PageAPI')) {
                 'search_request' => PAGEAPI_PATH . 'classes/search_request.php',
                 'children_request' => PAGEAPI_PATH . 'classes/children_request.php',
                 'az_request' => PAGEAPI_PATH . 'classes/az_request.php',
+                'news_request' => PAGEAPI_PATH . 'classes/news_request.php',
             );
         }
 
