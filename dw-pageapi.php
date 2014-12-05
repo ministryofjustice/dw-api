@@ -4,7 +4,7 @@
   Plugin Name: dw-PageAPI
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.3.1
+  Version: 0.5.1
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -16,6 +16,8 @@
           (note that api_request now takes array as argument which mirrors API args)
   0.4   - added az_request and refactored search_request
   0.5   - added news_request
+  0.5.1 - fix for news_request returning non-news items
+          'news' is now also an allowed 'type' for az_request
  */
 
 if (!defined('ABSPATH')) {
@@ -29,7 +31,7 @@ if (!class_exists('PageAPI')) {
         /**
          * @var string
          */
-        public $version = '0.5';
+        public $version = '0.5.1';
 
         /**
          * Define PageAPI constants

@@ -39,3 +39,6 @@ You can use the plugin within by PHP as follows:
 0.4   - added az_request and refactored search_request
 
 0.5   - added news_request
+
+0.5.1 - fix for news_request returning non-news items
+        'news' is now also an allowed 'type' for az_request

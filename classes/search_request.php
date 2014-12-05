@@ -13,12 +13,14 @@ class search_request extends api_request {
     // Default search order parameters
     protected $search_order     = 'ASC';
     protected $search_orderby   = 'title';
+    protected $post_type        = null;
 
 	function __construct($param_array = array()) {
         // Setup vars from url params
         $this->set_params($param_array);
+        $this->data['type'] = $this->post_type===null ? $this->data['type'] : $this->post_type;
         // Check search type - if not page or doc, default to page
-        if(!in_array($this->data['type'],array("page","doc"),true)) {
+        if(!in_array($this->data['type'],array("page","doc","news"),true)) {
             $this->data['type'] = "page";
         }
 

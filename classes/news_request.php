@@ -9,8 +9,11 @@
 
 class news_request extends search_request {
 
+	public static $params = array('category','keywords','page','per_page');
+
 	protected $search_order 	= 'DESC';
 	protected $search_orderby	= 'date';
+	protected $post_type        = 'news';
 
 	function generate_json($results = array()) {
 
@@ -48,5 +51,7 @@ class news_request extends search_request {
 		// Prevent protected variables being returned
 		unset($this->search_order);
 		unset($this->search_orderby);
+		unset($this->post_type);
+		unset($this->data);
 	}
 }
