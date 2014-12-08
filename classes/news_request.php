@@ -42,7 +42,7 @@ class news_request extends search_request {
                     // Page Excerpt
                     'excerpt'   		=>  get_the_excerpt(),
                     // Featured Image
-                    'thumbnail_url' => wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail'),
+                    'thumbnail_url' => wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail')[0],
                     // Timestamp
                     'timestamp'			=>	get_the_time('Y-m-d H:m:s'),
                 );
