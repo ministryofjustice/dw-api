@@ -32,6 +32,8 @@ class news_request extends search_request {
             $last_post = false;
             while ($results->have_posts()) {
             	$results->the_post();
+              $thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail');
+
              	$this->results_array['results'][] = array(
                     // Page Title
                     'title' 			=>  get_the_title(),
@@ -42,7 +44,7 @@ class news_request extends search_request {
                     // Page Excerpt
                     'excerpt'   		=>  get_the_excerpt(),
                     // Featured Image
-                    'thumbnail_url' => wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail')[0],
+                    'thumbnail_url' => $thumbnail[0],
                     // Timestamp
                     'timestamp'			=>	get_the_time('Y-m-d H:m:s'),
                 );
