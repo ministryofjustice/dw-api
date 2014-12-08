@@ -35,14 +35,14 @@ class news_request extends search_request {
              	$this->results_array['results'][] = array(
                     // Page Title
                     'title' 			=>  get_the_title(),
-                    // Page URL 
+                    // Page URL
                     'url'   			=>  get_the_permalink(),
                     // Page Slug
                     'slug'  			=>  $post->post_name,
                     // Page Excerpt
                     'excerpt'   		=>  get_the_excerpt(),
                     // Featured Image
-                    'thumbnail_url'		=>	get_the_post_thumbnail($post->ID,'post-thumbnail',array()),
+                    'thumbnail_url' => wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail'),
                     // Timestamp
                     'timestamp'			=>	get_the_time('Y-m-d H:m:s'),
                 );
