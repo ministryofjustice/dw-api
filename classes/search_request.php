@@ -75,6 +75,9 @@ class search_request extends api_request {
             // Get length of date string
             $date_length = strlen($query_date);
             $date_array = explode("-", $query_date);
+            foreach($date_array as $date_component) {
+                $api_error = !is_numeric($date_component) ?: false;
+            }
             // Act depending on length of date
             switch($date_length) {
                 case 4: // Year
@@ -82,12 +85,15 @@ class search_request extends api_request {
                         'year'  =>  $date_array[0]
                     );
                     break;
+                case 6:
                 case 7: // Year/Month
                     $date_args = array(
                         'year'  =>  $date_array[0],
                         'monthnum' =>  $date_array[1]
                     );
                 break;
+                case 8:
+                case 9:
                 case 10: // Year/Month/Day
                     $date_args = array(
                         'year'  =>  $date_array[0],

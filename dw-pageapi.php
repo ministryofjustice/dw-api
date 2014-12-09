@@ -19,20 +19,22 @@
   0.5.1 - fix for news_request returning non-news items
           'news' is now also an allowed 'type' for az_request
   0.6   - added ability to filter by year/month/day on news_request
+  0.6.1 - news_request date filter now handles day and month without leading zeroes
+          reports error if date components are non-numeric
  */
 
-if (!defined('ABSPATH')) {
+  if (!defined('ABSPATH')) {
     exit; // disable direct access
-}
+  }
 
-if (!class_exists('PageAPI')) {
+  if (!class_exists('PageAPI')) {
 
     class PageAPI {
 
         /**
          * @var string
          */
-        public $version = '0.6';
+        public $version = '0.6.1';
 
         /**
          * Define PageAPI constants
@@ -41,10 +43,10 @@ if (!class_exists('PageAPI')) {
          */
         private function define_constants() {
 
-            define('PAGEAPI_VERSION', $this->version);
-            define('PAGEAPI_BASE_URL', trailingslashit(plugins_url('pageapi')));
-            define('PAGEAPI_PATH', plugin_dir_path(__FILE__));
-            define('PAGEAPI_ROOT', 'service');
+          define('PAGEAPI_VERSION', $this->version);
+          define('PAGEAPI_BASE_URL', trailingslashit(plugins_url('pageapi')));
+          define('PAGEAPI_PATH', plugin_dir_path(__FILE__));
+          define('PAGEAPI_ROOT', 'service');
         }
 
         /**
@@ -53,23 +55,23 @@ if (!class_exists('PageAPI')) {
          * @since 1.0
          */
         private function plugin_classes() {
-            return array(
-                'api_request' => PAGEAPI_PATH . 'classes/api_request.php',
-                'search_request' => PAGEAPI_PATH . 'classes/search_request.php',
-                'children_request' => PAGEAPI_PATH . 'classes/children_request.php',
-                'az_request' => PAGEAPI_PATH . 'classes/az_request.php',
-                'news_request' => PAGEAPI_PATH . 'classes/news_request.php',
+          return array(
+            'api_request' => PAGEAPI_PATH . 'classes/api_request.php',
+            'search_request' => PAGEAPI_PATH . 'classes/search_request.php',
+            'children_request' => PAGEAPI_PATH . 'classes/children_request.php',
+            'az_request' => PAGEAPI_PATH . 'classes/az_request.php',
+            'news_request' => PAGEAPI_PATH . 'classes/news_request.php',
             );
         }
 
         public function __construct() {
-            $this->define_constants();
-            $this->includes();
+          $this->define_constants();
+          $this->includes();
 
             // Setup permalinks
-            add_action('wp_loaded', array(&$this, 'flush_api_permalinks'));
-            add_action('init', array(&$this, 'setup_api_rewrites'), 10);
-            add_action('wp', array(&$this, 'process_api_request'), 5);
+          add_action('wp_loaded', array(&$this, 'flush_api_permalinks'));
+          add_action('init', array(&$this, 'setup_api_rewrites'), 10);
+          add_action('wp', array(&$this, 'process_api_request'), 5);
         }
 
         /**
@@ -107,14 +109,14 @@ if (!class_exists('PageAPI')) {
         * @since 1.0
         */
         public function flush_api_permalinks() {
-            global $wp_query;
+          global $wp_query;
 
-            $rules = get_option('rewrite_rules');
+          $rules = get_option('rewrite_rules');
 
-            if (!isset($rules['(' . PAGEAPI_ROOT . ')/(.+)$'])) {
-                global $wp_rewrite;
-                $wp_rewrite->flush_rules();
-            }
+          if (!isset($rules['(' . PAGEAPI_ROOT . ')/(.+)$'])) {
+            global $wp_rewrite;
+            $wp_rewrite->flush_rules();
+          }
         }
 
         /**
@@ -123,26 +125,26 @@ if (!class_exists('PageAPI')) {
         * @since 1.0
         */
         public function process_api_request() {
-            global $wp_query;
+          global $wp_query;
 
             // Get custom URL parameters
-            $api_action = get_query_var('api_action');
+          $api_action = get_query_var('api_action');
 
-            if ($api_action !== '') {
-                $request_class = $api_action . "_request";
-                if (class_exists($request_class)) {
-                  $results = new $request_class(array());
-                } else {
+          if ($api_action !== '') {
+            $request_class = $api_action . "_request";
+            if (class_exists($request_class)) {
+              $results = new $request_class(array());
+            } else {
                   // $results = array();
-                  $results->results_array = array (
-                    "status"    => 401,
-                    "message"   => "Endpoint not valid",
-                    "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
-                  );
-                }
-                $this->output_json($results);
-                exit;
+              $results->results_array = array (
+                "status"    => 401,
+                "message"   => "Endpoint not valid",
+                "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+                );
             }
+            $this->output_json($results);
+            exit;
+          }
         }
 
         /**
@@ -152,11 +154,11 @@ if (!class_exists('PageAPI')) {
          */
         private function includes() {
 
-            foreach ($this->plugin_classes() as $id => $path) {
-                if (is_readable($path) && !class_exists($id)) {
-                    require_once $path;
-                }
+          foreach ($this->plugin_classes() as $id => $path) {
+            if (is_readable($path) && !class_exists($id)) {
+              require_once $path;
             }
+          }
         }
 
         /**
@@ -177,7 +179,7 @@ if (!class_exists('PageAPI')) {
           echo json_encode($json_array->results_array);
         }
 
-    }
+      }
 
-    new PageAPI;
-}
+      new PageAPI;
+    }

@@ -44,3 +44,6 @@ You can use the plugin within by PHP as follows:
         'news' is now also an allowed 'type' for az_request
 
 0.6   - added ability to filter by year/month/day on news_request
+
+0.6.1 - news_request date filter now handles day and month without leading zeroes
+        reports error if date components are non-numeric
