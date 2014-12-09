@@ -18,6 +18,7 @@
   0.5   - added news_request
   0.5.1 - fix for news_request returning non-news items
           'news' is now also an allowed 'type' for az_request
+  0.6   - added ability to filter by year/month/day on news_request
  */
 
 if (!defined('ABSPATH')) {
@@ -31,7 +32,7 @@ if (!class_exists('PageAPI')) {
         /**
          * @var string
          */
-        public $version = '0.5.1';
+        public $version = '0.6';
 
         /**
          * Define PageAPI constants
@@ -129,7 +130,16 @@ if (!class_exists('PageAPI')) {
 
             if ($api_action !== '') {
                 $request_class = $api_action . "_request";
-                $results = new $request_class(array());
+                if (class_exists($request_class)) {
+                  $results = new $request_class(array());
+                } else {
+                  // $results = array();
+                  $results->results_array = array (
+                    "status"    => 401,
+                    "message"   => "Endpoint not valid",
+                    "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+                  );
+                }
                 $this->output_json($results);
                 exit;
             }
@@ -155,9 +165,13 @@ if (!class_exists('PageAPI')) {
          * @since 1.0
          */
         function output_json($json_array) {
+          // print_r($json_array);§
           $status = $json_array->results_array['status'];
           if (!is_null($status)) {
             http_response_code($status);
+          } elseif (empty($json_array->results_array['results'])) {
+            $json_array->results_array['totalResults'] = 0;
+            $json_array->results_array['results'] = array();
           }
           header('Content-Type: application/json');
           echo json_encode($json_array->results_array);

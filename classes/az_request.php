@@ -14,14 +14,15 @@ class az_request extends search_request {
 
 	function generate_json($results = array()) {
 
-        if($results->have_posts()) {
 
-            // Start JSON
-            // URL parameters
-            // $this->results_array[]['url_params'] = array();
-            foreach ($this::$params as $param) {
-                $this->results_array['urlParams'][$param] = $this->data[$param];
-            }
+        // Start JSON
+        // URL parameters
+        // $this->results_array[]['url_params'] = array();
+        foreach ($this::$params as $param) {
+            $this->results_array['urlParams'][$param] = $this->data[$param];
+        }
+            
+        if($results->have_posts()) {
 
             // Total posts
             $this->results_array['totalResults'] = $results->found_posts;

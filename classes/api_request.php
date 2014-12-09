@@ -29,4 +29,12 @@ class api_request {
         }
     }
 
+    function generate_json() {
+        $this->results_array = array(
+            "status"    => 401,
+            "message"   => "Endpoint not valid",
+            "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+        );
+    }
+
 }

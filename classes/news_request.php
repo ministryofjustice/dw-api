@@ -9,7 +9,7 @@
 
 class news_request extends search_request {
 
-	public static $params = array('category','keywords','page','per_page');
+	public static $params = array('category','date','keywords','page','per_page');
 
 	protected $search_order 	= 'DESC';
 	protected $search_orderby	= 'date';
@@ -17,14 +17,14 @@ class news_request extends search_request {
 
 	function generate_json($results = array()) {
 
-		if($results->have_posts()) {
+        // Start JSON
+        // URL parameters
+        // $this->results_array[]['url_params'] = array();
+        foreach ($this::$params as $param) {
+            $this->results_array['urlParams'][$param] = $this->data[$param];
+        }
 
-			// Start JSON
-            // URL parameters
-            // $this->results_array[]['url_params'] = array();
-            foreach ($this::$params as $param) {
-                $this->results_array['urlParams'][$param] = $this->data[$param];
-            }
+		if($results->have_posts()) {
 
             // Total posts
             $this->results_array['totalResults'] = $results->found_posts;

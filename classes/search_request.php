@@ -69,21 +69,54 @@ class search_request extends api_request {
             'post__in'          =>  $postids
         );
 
-        // Get matching results
-        $results = new WP_Query($args);
+        // If date set, work out date range
+        if (isset($this->data['date'])) {
+            $query_date = $this->data['date'];
+            // Get length of date string
+            $date_length = strlen($query_date);
+            $date_array = explode("-", $query_date);
+            // Act depending on length of date
+            switch($date_length) {
+                case 4: // Year
+                    $date_args = array(
+                        'year'  =>  $date_array[0]
+                    );
+                    break;
+                case 7: // Year/Month
+                    $date_args = array(
+                        'year'  =>  $date_array[0],
+                        'monthnum' =>  $date_array[1]
+                    );
+                break;
+                case 10: // Year/Month/Day
+                    $date_args = array(
+                        'year'  =>  $date_array[0],
+                        'monthnum' =>  $date_array[1],
+                        'day'   =>  $date_array[2]
+                    );
+                break;
+                default: // Invalid dates
+                    $api_error = true;
 
-        $this::generate_json($results);
+            }
+            if (!$api_error) {
+                $args = array_merge($args,$date_args);
+        
+                // Get matching results
+                $results = new WP_Query($args);
+
+                $this::generate_json($results);
+            } else {
+                $this->results_array = array(
+                    "status"    => 401,
+                    "message"   => "Invalid date",
+                    "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+                );
+            }
+        }
 
         return($this->results_array);
 	}
-
-    function generate_json() {
-        $this->results_array = array(
-            "status"    => 401,
-            "message"   => "Endpoint not valid",
-            "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
-        );
-    }
 
 }
 ?>
