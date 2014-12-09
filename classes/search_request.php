@@ -76,7 +76,7 @@ class search_request extends api_request {
             $date_length = strlen($query_date);
             $date_array = explode("-", $query_date);
             foreach($date_array as $date_component) {
-                $api_error = !is_numeric($date_component) ?: false;
+                $api_error = !is_numeric($date_component) ?: false; //To be fixed: as long as the value on the last iteration is numeric, no error wil be raised, e.g. "asd-01" will be let through
             }
             // Act depending on length of date
             switch($date_length) {
@@ -105,20 +105,22 @@ class search_request extends api_request {
                     $api_error = true;
 
             }
-            if (!$api_error) {
-                $args = array_merge($args,$date_args);
-        
-                // Get matching results
-                $results = new WP_Query($args);
 
-                $this::generate_json($results);
-            } else {
-                $this->results_array = array(
-                    "status"    => 401,
-                    "message"   => "Invalid date",
-                    "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
-                );
-            }
+            $args = array_merge($args,$date_args);
+        }
+
+        if (!$api_error) {
+
+            // Get matching results
+            $results = new WP_Query($args);
+
+            $this::generate_json($results);
+        } else {
+            $this->results_array = array(
+                "status"    => 401,
+                "message"   => "Invalid date",
+                "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+            );
         }
 
         return($this->results_array);
