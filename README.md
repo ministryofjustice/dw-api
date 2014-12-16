@@ -12,9 +12,11 @@ The default root is _service_ but this can be changed in the code by altering th
 
 * children/{page-id}/ - retrieve the immediate children of the given page
 
-* az/{type}/{category}/{plus+seperated+keywords}/{initial}/{page}/{per-page}
+* az/{type}/{category}/{plus+seperated+keywords}/{initial}/{page}/{per-page} - retrieve items grouped by initial
 
-* news/{type}/{category}/{plus+seperated+keywords}/{initial}/{page}/{per-page}
+* news/{type}/{category}/{plus+seperated+keywords}/{initial}/{page}/{per-page} - retrieve news items
+
+* search/{type}/{category}/{plus+seperated+keywords}/{page}/{per-page} - searches all site content
 
 ##Direct use
 You can use the plugin within by PHP as follows:
@@ -25,25 +27,29 @@ You can use the plugin within by PHP as follows:
 
 * $news = new news_request ({type},{category},{plus+seperated+keywords},{initial},{page},{per-page})
 
+* $search = new search_request ({type},{category},{plus+seperated+keywords},{page},{per-page})
+
 ##Release history
 
-0.1   - initial release with _children_ endpoint
+0.7   - extended search_request so it can be called on its own
 
-0.2   - search API added
+0.6.1 - news_request date filter now handles day and month without leading zeroes
+        reports error if date components are non-numeric
 
-0.3   - added urlParams and totalResults to search API; handles '-' in query URL
-
-0.3.1 - corrected issue when api_request class instantiated directly in PHP
-        (note that api_request now takes array as argument which mirrors API args)
-
-0.4   - added az_request and refactored search_request
-
-0.5   - added news_request
+0.6   - added ability to filter by year/month/day on news_request
 
 0.5.1 - fix for news_request returning non-news items
         'news' is now also an allowed 'type' for az_request
 
-0.6   - added ability to filter by year/month/day on news_request
+0.5   - added news_request
 
-0.6.1 - news_request date filter now handles day and month without leading zeroes
-        reports error if date components are non-numeric
+0.4   - added az_request and refactored search_request
+
+0.3.1 - corrected issue when api_request class instantiated directly in PHP
+        (note that api_request now takes array as argument which mirrors API args)
+
+0.3   - added urlParams and totalResults to search API; handles '-' in query URL
+
+0.2   - search API added
+
+0.1   - initial release with _children_ endpoint

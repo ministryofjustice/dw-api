@@ -19,7 +19,6 @@ class news_request extends search_request {
 
         // Start JSON
         // URL parameters
-        // $this->results_array[]['url_params'] = array();
         foreach ($this::$params as $param) {
             $this->results_array['urlParams'][$param] = $this->data[$param];
         }

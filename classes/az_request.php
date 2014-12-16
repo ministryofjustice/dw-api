@@ -9,6 +9,8 @@
 
 class az_request extends search_request {
 
+    public static $params = array('type','category','keywords','initial','page','per_page');
+
 	protected $search_order 	= 'ASC';
 	protected $search_orderby	= 'title';
 

@@ -8,7 +8,7 @@
  */
 class search_request extends api_request {
 
-	public static $params = array('type','category','keywords','initial','page','per_page');
+	public static $params = array('type','category','keywords','page','per_page');
 
     // Default search order parameters
     protected $search_order     = 'ASC';
@@ -20,8 +20,13 @@ class search_request extends api_request {
         $this->set_params($param_array);
         $this->data['type'] = $this->post_type===null ? $this->data['type'] : $this->post_type;
         // Check search type - if not page or doc, default to page
-        if(!in_array($this->data['type'],array("page","doc","news"),true)) {
-            $this->data['type'] = "page";
+        $valid_post_types = array("page","doc","news"); // This should be added to as new post types are used
+        if(!in_array($this->data['type'],$valid_post_types,true)) {
+            if($this->data['type']==='all') {
+                $this->data['type'] = $valid_post_types;
+            } else {
+                $this->data['type'] = "page";
+            }
         }
 
         // If initial set, limit WP_Query args to matching post IDs
@@ -107,11 +112,6 @@ class search_request extends api_request {
             }
             if (!$api_error) {
                 $args = array_merge($args,$date_args);
-        
-                // Get matching results
-                $results = new WP_Query($args);
-
-                $this::generate_json($results);
             } else {
                 $this->results_array = array(
                     "status"    => 401,
@@ -121,8 +121,63 @@ class search_request extends api_request {
             }
         }
 
+        if (!$api_error) {
+            // Get matching results
+            $results = new WP_Query($args);
+
+            $this::generate_json($results); 
+        }
+
         return($this->results_array);
 	}
+
+
+    function generate_json($results = array()) {
+
+        // Start JSON
+        // URL parameters
+        foreach ($this::$params as $param) {
+            $this->results_array['urlParams'][$param] = $this->data[$param];
+        }
+
+        if($results->have_posts()) {
+
+            // Total posts
+            $this->results_array['totalResults'] = $results->found_posts;
+
+            $last_post = false;
+            while ($results->have_posts()) {
+                $results->the_post();
+                $thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail');
+
+                $this->results_array['results'][] = array(
+                    // Page Title
+                    'title'             =>  get_the_title(),
+                    // Page URL
+                    'url'               =>  get_the_permalink(),
+                    // Page Slug
+                    'slug'              =>  $post->post_name,
+                    // Page Excerpt
+                    'excerpt'           =>  get_the_excerpt(),
+                    // Featured Image
+                    'thumbnail_url'     =>  $thumbnail[0],
+                    // Timestamp
+                    'timestamp'         =>  get_the_time('Y-m-d H:m:s'),
+                    // File URL
+                    'file_url'          =>  '',
+                    // File size
+                    'file_size'         =>  0,
+                    // File pages
+                    'file_pages'        =>  0
+                );
+            }
+        }
+        // Prevent protected variables being returned
+        unset($this->search_order);
+        unset($this->search_orderby);
+        unset($this->post_type);
+        unset($this->data);
+    }
 
 }
 ?>

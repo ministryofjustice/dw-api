@@ -4,7 +4,7 @@
   Plugin Name: dw-PageAPI
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.5.1
+  Version: 0.7
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -21,6 +21,7 @@
   0.6   - added ability to filter by year/month/day on news_request
   0.6.1 - news_request date filter now handles day and month without leading zeroes
           reports error if date components are non-numeric
+  0.7   - extended search_request so it can be called on its own
  */
 
   if (!defined('ABSPATH')) {
@@ -34,7 +35,7 @@
         /**
          * @var string
          */
-        public $version = '0.6.1';
+        public $version = '0.7';
 
         /**
          * Define PageAPI constants
