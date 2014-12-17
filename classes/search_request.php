@@ -165,6 +165,8 @@ class search_request extends api_request {
                     'timestamp'         =>  get_the_time('Y-m-d H:m:s'),
                     // File URL
                     'file_url'          =>  '',
+                    // File name
+                    'file_name'         =>  '',
                     // File size
                     'file_size'         =>  0,
                     // File pages

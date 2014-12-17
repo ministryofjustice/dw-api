@@ -31,6 +31,8 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
+0.7.1 - added file_name to returned json for search_request
+
 0.7   - extended search_request so it can be called on its own
 
 0.6.1 - news_request date filter now handles day and month without leading zeroes
