@@ -68,6 +68,10 @@ class children_request extends api_request {
         $subpage_array['excerpt'] = get_the_excerpt();
         // Subpage Order
         $subpage_array['order'] = $subpage->posts[0]->menu_order;
+        // Subpage Child count
+        $subpage_array['child_count'] = count(get_pages('child_of='.$subpage_id.'&depth=1'));
+        // Subpage Redirect
+        $subpage_array['is_external'] = get_post_meta( $subpage_id, 'redirect_enabled', true );
         // Subpage End
         return $subpage_array;
     }

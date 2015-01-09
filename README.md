@@ -31,6 +31,8 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
+0.8   - extended children_request to return child_count and is_external
+
 0.7.1 - added file_name to returned json for search_request
 
 0.7   - extended search_request so it can be called on its own

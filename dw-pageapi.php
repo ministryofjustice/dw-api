@@ -4,7 +4,7 @@
   Plugin Name: dw-PageAPI
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.7.1
+  Version: 0.8
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -23,6 +23,7 @@
           reports error if date components are non-numeric
   0.7   - extended search_request so it can be called on its own
   0.7.1 - added file_name to returned json for search_request
+  0.8   - extended children_request to return child_count and is_external
  */
 
   if (!defined('ABSPATH')) {
