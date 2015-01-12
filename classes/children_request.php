@@ -21,23 +21,23 @@ class children_request extends api_request {
             $submenu_page->the_post();
 
             // Start JSON
-                // Page name
-                    $this->results_array['title'] = get_the_title();
-                // Subpages Start
-                    $subpages = new WP_Query(array(
-                        'post_parent' => $this->data['pageid'],
-                        'post_type' => array('page'),
-                        'posts_per_page' => -1
-                    ));
-                    if ($subpages->have_posts()) {
-                        while ($subpages->have_posts()) {
-                            $subpages->the_post();
-                            $this->results_array['items'][] = $this->build_subpage(get_the_ID());
-                        }
-                    } else {
-                        $this->results_array['items'] = array();
-                    }
-                // Subpages End
+            // Page name
+            $this->results_array['title'] = get_the_title();
+            // Subpages Start
+            $subpages = new WP_Query(array(
+                'post_parent' => $this->data['pageid'],
+                'post_type' => array('page'),
+                'posts_per_page' => -1
+            ));
+            if ($subpages->have_posts()) {
+                while ($subpages->have_posts()) {
+                    $subpages->the_post();
+                    $this->results_array['items'][] = $this->build_subpage(get_the_ID());
+                }
+            } else {
+                $this->results_array['items'] = array();
+            }
+            // Subpages End
             // End JSON
 
             return($this->results_array);
@@ -53,6 +53,13 @@ class children_request extends api_request {
             'p' => $subpage_id,
             'post_type' => array('page')
         ));
+
+        $children = new WP_Query(array(
+            'post_type' => array('page'),
+            'post_parent' => $subpage_id,
+            'posts_per_page' => -1
+        ));
+
         $subpage->the_post();
         // Subpage Start
         $subpage_array = array();
@@ -69,7 +76,8 @@ class children_request extends api_request {
         // Subpage Order
         $subpage_array['order'] = $subpage->posts[0]->menu_order;
         // Subpage Child count
-        $subpage_array['child_count'] = count(get_pages('child_of='.$subpage_id.'&depth=1'));
+
+        $subpage_array['child_count'] = count($children->posts);
         // Subpage Redirect
         $subpage_array['is_external'] = get_post_meta( $subpage_id, 'redirect_enabled', true );
         // Subpage End
