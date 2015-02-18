@@ -4,7 +4,7 @@
   Plugin Name: dw-PageAPI
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.8
+  Version: 0.9
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -24,6 +24,7 @@
   0.7   - extended search_request so it can be called on its own
   0.7.1 - added file_name to returned json for search_request
   0.8   - extended children_request to return child_count and is_external
+  0.9   - added crawl_request to provide url mapping for content crawler/importer
  */
 
   if (!defined('ABSPATH')) {
@@ -37,7 +38,7 @@
         /**
          * @var string
          */
-        public $version = '0.7.1';
+        public $version = '0.9';
 
         /**
          * Define PageAPI constants
@@ -64,6 +65,7 @@
             'children_request' => PAGEAPI_PATH . 'classes/children_request.php',
             'az_request' => PAGEAPI_PATH . 'classes/az_request.php',
             'news_request' => PAGEAPI_PATH . 'classes/news_request.php',
+            'crawl_request' => PAGEAPI_PATH . 'classes/crawl_request.php'
             );
         }
 

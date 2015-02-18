@@ -4,7 +4,7 @@ dw-pageapi
 WordPress plugin that lets you query the page structure through a RESTful API
 
 ##Endpoints
-These can be accessed using the form 
+These can be accessed using the form
 
 	/{plugin-root}/{endpoint}/{param_1}/.../{param_n}/
 
@@ -18,6 +18,8 @@ The default root is _service_ but this can be changed in the code by altering th
 
 * search/{type}/{category}/{plus+seperated+keywords}/{page}/{per-page} - searches all site content
 
+* crawl/ - returns pages that have a redirect url
+
 ##Direct use
 You can use the plugin within by PHP as follows:
 
@@ -29,7 +31,11 @@ You can use the plugin within by PHP as follows:
 
 * $search = new search_request ({type},{category},{plus+seperated+keywords},{page},{per-page})
 
+* $crawl = new crawl_request
+
 ##Release history
+
+0.9   - added crawl_request to provide url mapping for content crawler/importer
 
 0.8   - extended children_request to return child_count and is_external
 
