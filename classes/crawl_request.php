@@ -29,7 +29,6 @@ class crawl_request extends search_request {
             $last_post = false;
             while ($results->have_posts()) {
               $results->the_post();
-              $thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail');
 
               $post_id = get_the_id();
 
@@ -38,9 +37,9 @@ class crawl_request extends search_request {
               if($redirect_url) {
                 $this->results_array['results'][] = array(
                       // Redirect URL
-                      'redirect_url'  => $redirect_url,
+                      'old_url'  => $redirect_url,
                       // Page URL
-                      'wp_url'        =>  get_the_permalink(),
+                      'new_url'        =>  get_the_permalink(),
                       // Post ID
                       'id'            => $post_id
                   );
