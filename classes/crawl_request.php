@@ -26,6 +26,7 @@ class crawl_request extends search_request {
             // Total posts
             // $this->results_array['totalResults'] = $results->found_posts;
 
+            $site_url = get_site_url();
             $last_post = false;
             while ($results->have_posts()) {
               $results->the_post();
@@ -35,11 +36,12 @@ class crawl_request extends search_request {
               $redirect_url = get_post_meta( $post_id, 'redirect_url', true );
 
               if($redirect_url) {
+                $new_url = str_replace($site_url, '', get_the_permalink());
                 $this->results_array['results'][] = array(
                       // Redirect URL
                       'old_url'  => $redirect_url,
                       // Page URL
-                      'new_url'        =>  get_the_permalink(),
+                      'new_url'        =>  $new_url,
                       // Post ID
                       'id'            => $post_id
                   );
