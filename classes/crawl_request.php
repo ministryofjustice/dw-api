@@ -45,7 +45,7 @@ class crawl_request extends search_request {
 
               if($redirect_url) {
                 $new_url = str_replace($site_url, '', get_the_permalink());
-                $this->results_array['results'][] = array(
+                $this->results_array[] = array(
                       // Redirect URL
                       'old_url'  => $redirect_url,
                       // Page URL
