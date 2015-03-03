@@ -79,7 +79,7 @@ class children_request extends api_request {
 
         $subpage_array['child_count'] = count($children->posts);
         // Subpage Redirect
-        $subpage_array['is_external'] = get_post_meta( $subpage_id, 'redirect_enabled', true );
+        $subpage_array['is_external'] = (int) get_post_meta( $subpage_id, 'redirect_enabled', true );
         // Subpage End
         return $subpage_array;
     }
