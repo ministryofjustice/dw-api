@@ -124,8 +124,10 @@ class search_request extends api_request {
         if (!$api_error) {
             // Get matching results
             $results = new WP_Query($args);
-
-            $this::generate_json($results); 
+            if(function_exists(relevanssi_do_query)) {
+                relevanssi_do_query($results);
+            }
+            $this::generate_json($results);
         }
 
         return($this->results_array);
@@ -147,6 +149,7 @@ class search_request extends api_request {
 
             $last_post = false;
             while ($results->have_posts()) {
+                global $post;
                 $results->the_post();
                 $thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail');
 
@@ -158,7 +161,7 @@ class search_request extends api_request {
                     // Page Slug
                     'slug'              =>  $post->post_name,
                     // Page Excerpt
-                    'excerpt'           =>  get_the_excerpt(),
+                    'excerpt'           =>  $post->post_excerpt,
                     // Featured Image
                     'thumbnail_url'     =>  $thumbnail[0],
                     // Timestamp
