@@ -8,7 +8,7 @@
  */
 class children_request extends api_request {
 
-    public static $params = array('pageid');
+    public static $params = array('pageid','orderby','order');
 
     function __construct($param_array) {
             // Setup vars from url params
@@ -27,12 +27,14 @@ class children_request extends api_request {
             $subpages = new WP_Query(array(
                 'post_parent' => $this->data['pageid'],
                 'post_type' => array('page'),
-                'posts_per_page' => -1
+                'posts_per_page' => -1,
+                'orderby' => $this->data['orderby'],
+                'order' => $this->data['order']
             ));
             if ($subpages->have_posts()) {
                 while ($subpages->have_posts()) {
                     $subpages->the_post();
-                    $this->results_array['items'][] = $this->build_subpage(get_the_ID());
+                    $this->results_array['items'][] = $this->build_subpage(get_the_ID(),$this->data['orderby'],$this->data['order']);
                 }
             } else {
                 $this->results_array['items'] = array();
@@ -48,7 +50,7 @@ class children_request extends api_request {
      *
      * @since 0.1
      */
-    function build_subpage($subpage_id = 0) {
+    function build_subpage($subpage_id = 0, $orderby, $order) {
         $subpage = new WP_Query(array(
             'p' => $subpage_id,
             'post_type' => array('page')
