@@ -35,6 +35,8 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
+0.9.1 - fixed issue which was preventing news appearing with Relevanssi enabled
+
 0.9   - added crawl_request to provide url mapping for content crawler/importer
 
 0.8   - extended children_request to return child_count and is_external

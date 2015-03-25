@@ -25,6 +25,7 @@
   0.7.1 - added file_name to returned json for search_request
   0.8   - extended children_request to return child_count and is_external
   0.9   - added crawl_request to provide url mapping for content crawler/importer
+  0.9.1 - fixed issue which was preventing news appearing with Relevanssi enabled
  */
 
   if (!defined('ABSPATH')) {

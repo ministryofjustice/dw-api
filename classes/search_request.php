@@ -12,7 +12,7 @@ class search_request extends api_request {
 
     // Default search order parameters
     protected $search_order     = 'ASC';
-    protected $search_orderby   = 'title';
+    protected $search_orderby   = 'relevance';
     protected $post_type        = null;
 
 	function __construct($param_array = array()) {
@@ -38,6 +38,8 @@ class search_request extends api_request {
                 WHERE       SUBSTR($wpdb->posts.post_title,1,1) = %s
                 ORDER BY    $wpdb->posts.post_title",$this->data['initial'])
             );
+            $this->search_order = 'ASC';
+            $this->search_orderby = 'title';
         } else {
             $postids = null;
         }
@@ -124,7 +126,7 @@ class search_request extends api_request {
         if (!$api_error) {
             // Get matching results
             $results = new WP_Query($args);
-            if(function_exists(relevanssi_do_query)) {
+            if(function_exists(relevanssi_do_query) && $this->data['keywords']!=null) {
                 relevanssi_do_query($results);
             }
             $this::generate_json($results);
@@ -161,6 +163,7 @@ class search_request extends api_request {
                     // Page Slug
                     'slug'              =>  $post->post_name,
                     // Page Excerpt
+                    // 'excerpt'           =>  get_the_excerpt( ),
                     'excerpt'           =>  $post->post_excerpt,
                     // Featured Image
                     'thumbnail_url'     =>  $thumbnail[0],
