@@ -23,13 +23,14 @@ class children_request extends api_request {
             // Start JSON
             // Page name
             $this->results_array['title'] = get_the_title();
+            $this->results_array['id'] = get_the_ID();
             // Subpages Start
             $subpages = new WP_Query(array(
                 'post_parent' => $this->data['pageid'],
                 'post_type' => array('page'),
                 'posts_per_page' => -1,
-                'orderby' => $this->data['orderby'],
-                'order' => $this->data['order']
+                'orderby' => $this->data['orderby'] ?: 'title',
+                'order' => $this->data['order'] ?: 'asc'
             ));
             if ($subpages->have_posts()) {
                 while ($subpages->have_posts()) {
