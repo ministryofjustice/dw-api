@@ -15,6 +15,16 @@ class search_request extends api_request {
     protected $search_orderby   = 'relevance';
     protected $post_type        = null;
 
+  function rawurldecode($string) {
+    $string = str_replace('%252F', '%2F', $string);
+    $string = str_replace('%255C', '%5C', $string);
+    $string = rawurldecode($string);
+
+    Debug::raw($string);
+
+    return $string;
+  }
+
 	function __construct($param_array = array()) {
         // Setup vars from url params
         $this->set_params($param_array);
@@ -71,7 +81,7 @@ class search_request extends api_request {
             // Filters
             'post_type'         =>  $this->data['type'],
             'category_name'     =>  $this->data['category'],
-            's'                 =>  $this->data['keywords'],
+            's'                 =>  $this->rawurldecode($this->data['keywords']),
             // Restricts posts for first letter
             'post__in'          =>  $postids
         );
