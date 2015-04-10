@@ -20,8 +20,6 @@ class search_request extends api_request {
     $string = str_replace('%255C', '%5C', $string);
     $string = rawurldecode($string);
 
-    Debug::raw($string);
-
     return $string;
   }
 
