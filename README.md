@@ -35,6 +35,9 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
+0.10  - children_request now returns top level items with is_top_level set to 1 if
+        no parent id is given (or it is set to 0)
+
 0.9.1 - fixed issue which was preventing news appearing with Relevanssi enabled
 
 0.9   - added crawl_request to provide url mapping for content crawler/importer

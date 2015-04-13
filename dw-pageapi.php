@@ -26,6 +26,8 @@
   0.8   - extended children_request to return child_count and is_external
   0.9   - added crawl_request to provide url mapping for content crawler/importer
   0.9.1 - fixed issue which was preventing news appearing with Relevanssi enabled
+  0.10  - children_request now returns top level items with is_top_level set to 1 if
+          no parent id is given (or it is set to 0)
  */
 
   if (!defined('ABSPATH')) {

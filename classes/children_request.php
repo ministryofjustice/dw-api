@@ -13,25 +13,34 @@ class children_request extends api_request {
     function __construct($param_array) {
             // Setup vars from url params
             $this->set_params($param_array);
+
+            // Set post parent
+            $post_parent = $this->data['pageid'] ?: 0;
+
             // Get page details
             $submenu_page = new WP_Query(array(
-                'p' => $this->data['pageid'],
+                'p' => $post_parent,
                 'post_type' => array('page')
             ));
             $submenu_page->the_post();
 
             // Start JSON
             // Page name
-            $this->results_array['title'] = get_the_title();
-            $this->results_array['id'] = get_the_ID();
+            $this->results_array['title'] = $post_parent?get_the_title():"None";
+            $this->results_array['id'] = $post_parent?get_the_ID():0;
             // Subpages Start
-            $subpages = new WP_Query(array(
-                'post_parent' => $this->data['pageid'],
+            $subpages_args = array(
+                'post_parent' => $post_parent,
                 'post_type' => array('page'),
                 'posts_per_page' => -1,
                 'orderby' => $this->data['orderby'] ?: 'title',
                 'order' => $this->data['order'] ?: 'asc'
-            ));
+            );
+            if(!$post_parent) {
+                $subpages_args['meta_key'] = 'is_top_level';
+                $subpages_args['meta_value'] = 1;
+            }
+            $subpages = new WP_Query($subpages_args);
             if ($subpages->have_posts()) {
                 while ($subpages->have_posts()) {
                     $subpages->the_post();
@@ -79,10 +88,11 @@ class children_request extends api_request {
         // Subpage Order
         $subpage_array['order'] = $subpage->posts[0]->menu_order;
         // Subpage Child count
-
         $subpage_array['child_count'] = count($children->posts);
         // Subpage Redirect
         $subpage_array['is_external'] = (int) get_post_meta( $subpage_id, 'redirect_enabled', true );
+        // Subpage Status
+        $subpage_array['status'] = $subpage->posts[0]->post_status;
         // Subpage End
         return $subpage_array;
     }
