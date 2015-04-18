@@ -28,6 +28,7 @@ class children_request extends api_request {
             // Page name
             $this->results_array['title'] = $post_parent?get_the_title():"None";
             $this->results_array['id'] = $post_parent?get_the_ID():0;
+            $this->results_array['url'] = $post_parent ? get_the_permalink() : site_url();
             // Subpages Start
             $subpages_args = array(
                 'post_parent' => $post_parent,
