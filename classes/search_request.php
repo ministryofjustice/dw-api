@@ -28,7 +28,7 @@ class search_request extends api_request {
         $this->set_params($param_array);
         $this->data['type'] = $this->post_type===null ? $this->data['type'] : $this->post_type;
         // Check search type - if not page or doc, default to page
-        $valid_post_types = array("page","doc","news"); // This should be added to as new post types are used
+        $valid_post_types = array("page","doc","news","document"); // This should be added to as new post types are used
         if(!in_array($this->data['type'],$valid_post_types,true)) {
             if($this->data['type']==='all') {
                 $this->data['type'] = $valid_post_types;
