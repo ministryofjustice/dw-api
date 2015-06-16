@@ -165,26 +165,26 @@ class search_request extends api_request {
 
                 $this->results_array['results'][] = array(
                     // Page Title
-                    'title'             =>  get_the_title(),
+                    'title'             =>  (string) get_the_title(),
                     // Page URL
-                    'url'               =>  get_the_permalink(),
+                    'url'               =>  (string) get_the_permalink(),
                     // Page Slug
-                    'slug'              =>  $post->post_name,
+                    'slug'              =>  (string) $post->post_name,
                     // Page Excerpt
                     // 'excerpt'           =>  get_the_excerpt( ),
-                    'excerpt'           =>  $post->post_excerpt,
+                    'excerpt'           =>  (string) $post->post_excerpt,
                     // Featured Image
-                    'thumbnail_url'     =>  $thumbnail[0],
+                    'thumbnail_url'     =>  (string) $thumbnail[0],
                     // Timestamp
-                    'timestamp'         =>  get_the_time('Y-m-d H:m:s'),
+                    'timestamp'         =>  (string) get_the_time('Y-m-d H:m:s'),
                     // File URL
-                    'file_url'          =>  '',
+                    'file_url'          =>  (string) '',
                     // File name
-                    'file_name'         =>  '',
+                    'file_name'         =>  (string) '',
                     // File size
-                    'file_size'         =>  0,
+                    'file_size'         =>  (int) 0,
                     // File pages
-                    'file_pages'        =>  0
+                    'file_pages'        =>  (int) 0
                 );
             }
         }

@@ -35,17 +35,17 @@ class news_request extends search_request {
 
              	$this->results_array['results'][] = array(
                     // Page Title
-                    'title' 			=>  get_the_title(),
+                    'title' 			=>  (string) get_the_title(),
                     // Page URL
-                    'url'   			=>  get_the_permalink(),
+                    'url'   			=>  (string) get_the_permalink(),
                     // Page Slug
-                    'slug'  			=>  $post->post_name,
+                    'slug'  			=>  (string) $post->post_name,
                     // Page Excerpt
-                    'excerpt'   		=>  get_the_excerpt(),
+                    'excerpt'   		=>  (string)  get_the_excerpt(),
                     // Featured Image
-                    'thumbnail_url' => $thumbnail[0],
+                    'thumbnail_url' =>  (string) $thumbnail[0],
                     // Timestamp
-                    'timestamp'			=>	get_the_time('Y-m-d H:m:s'),
+                    'timestamp'			=>	(string) get_the_time('Y-m-d H:m:s'),
                 );
             }
 		}
