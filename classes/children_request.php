@@ -41,14 +41,17 @@ class children_request extends api_request {
                 $subpages_args['meta_key'] = 'is_top_level';
                 $subpages_args['meta_value'] = 1;
             }
+
             $subpages = new WP_Query($subpages_args);
+            $this->results_array['total_results'] = $subpages->found_posts;
+
             if ($subpages->have_posts()) {
                 while ($subpages->have_posts()) {
                     $subpages->the_post();
-                    $this->results_array['items'][] = $this->build_subpage(get_the_ID(),$this->data['orderby'],$this->data['order']);
+                    $this->results_array['results'][] = $this->build_subpage(get_the_ID(),$this->data['orderby'],$this->data['order']);
                 }
             } else {
-                $this->results_array['items'] = array();
+                $this->results_array['results'] = array();
             }
             // Subpages End
             // End JSON
@@ -91,7 +94,7 @@ class children_request extends api_request {
         // Subpage Child count
         $subpage_array['child_count'] = count($children->posts);
         // Subpage Redirect
-        $subpage_array['is_external'] = (int) get_post_meta( $subpage_id, 'redirect_enabled', true );
+        $subpage_array['is_external'] = (boolean) get_post_meta( $subpage_id, 'redirect_enabled', true );
         // Subpage Status
         $subpage_array['status'] = $subpage->posts[0]->post_status;
         // Subpage End

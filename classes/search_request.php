@@ -149,13 +149,13 @@ class search_request extends api_request {
         // Start JSON
         // URL parameters
         foreach ($this::$params as $param) {
-            $this->results_array['urlParams'][$param] = $this->data[$param];
+            $this->results_array['url_params'][$param] = $this->data[$param];
         }
 
         if($results->have_posts()) {
 
             // Total posts
-            $this->results_array['totalResults'] = $results->found_posts;
+            $this->results_array['total_results'] = $results->found_posts;
 
             $last_post = false;
             while ($results->have_posts()) {

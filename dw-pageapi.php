@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Plugin Name: dw-PageAPI
+  Plugin Name: DW PageAPI
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
   Version: 0.9
@@ -11,7 +11,7 @@
   ---------
   0.1   - initial release - children request class added
   0.2   - search request class added; api_request class added
-  0.3   - added urlParams and totalResults to search API; handles '-' in query URL
+  0.3   - added url_params and total_results to search API; handles '-' in query URL
   0.3.1 - corrected issue when api_request class instantiated directly in PHP
           (note that api_request now takes array as argument which mirrors API args)
   0.4   - added az_request and refactored search_request
@@ -29,6 +29,9 @@
   0.10  - children_request now returns top level items with is_top_level set to 1 if
           no parent id is given (or it is set to 0)
  */
+
+header("Access-Control-Allow-Origin: http://localhost");
+
 
   if (!defined('ABSPATH')) {
     exit; // disable direct access
@@ -175,12 +178,11 @@
          * @since 1.0
          */
         function output_json($json_array) {
-          // print_r($json_array);§
           $status = $json_array->results_array['status'];
           if (!is_null($status)) {
             http_response_code($status);
           } elseif (empty($json_array->results_array['results'])) {
-            $json_array->results_array['totalResults'] = 0;
+            $json_array->results_array['total_results'] = 0;
             $json_array->results_array['results'] = array();
           }
           header('Content-Type: application/json');
