@@ -31,7 +31,9 @@ class news_request extends search_request {
             $last_post = false;
             while ($results->have_posts()) {
             	$results->the_post();
-              $thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail');
+              $thumbnail_id = get_post_thumbnail_id($post->ID);
+              $thumbnail = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
+              $alt_text = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
 
              	$this->results_array['results'][] = array(
                     // Page Title
@@ -44,9 +46,12 @@ class news_request extends search_request {
                     'excerpt'   		=>  (string)  get_the_excerpt(),
                     // Featured Image
                     'thumbnail_url' =>  (string) $thumbnail[0],
+                    // Thumbnail Alt Text
+                    'thumbnail_alt_text' => (string) $alt_text,
                     // Timestamp
                     'timestamp'			=>	(string) get_the_time('Y-m-d H:m:s'),
                 );
+
             }
 		}
 		// Prevent protected variables being returned
