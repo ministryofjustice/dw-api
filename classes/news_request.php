@@ -26,7 +26,7 @@ class news_request extends search_request {
 		if($results->have_posts()) {
 
             // Total posts
-            $this->results_array['total_results'] = $results->found_posts;
+            $this->results_array['total_results'] = (int) $results->found_posts;
 
             $last_post = false;
             while ($results->have_posts()) {

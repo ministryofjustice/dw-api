@@ -43,7 +43,7 @@ class children_request extends api_request {
             }
 
             $subpages = new WP_Query($subpages_args);
-            $this->results_array['total_results'] = $subpages->found_posts;
+            $this->results_array['total_results'] = (int) $subpages->found_posts;
 
             if ($subpages->have_posts()) {
                 while ($subpages->have_posts()) {
