@@ -35,36 +35,38 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
-0.10  - children_request now returns top level items with is_top_level set to 1 if
+0.10.1 - removed CORS header
+
+0.10   - children_request now returns top level items with is_top_level set to 1 if
         no parent id is given (or it is set to 0)
 
-0.9.1 - fixed issue which was preventing news appearing with Relevanssi enabled
+0.9.1  - fixed issue which was preventing news appearing with Relevanssi enabled
 
-0.9   - added crawl_request to provide url mapping for content crawler/importer
+0.9    - added crawl_request to provide url mapping for content crawler/importer
 
-0.8   - extended children_request to return child_count and is_external
+0.8    - extended children_request to return child_count and is_external
 
-0.7.1 - added file_name to returned json for search_request
+0.7.1  - added file_name to returned json for search_request
 
-0.7   - extended search_request so it can be called on its own
+0.7    - extended search_request so it can be called on its own
 
-0.6.1 - news_request date filter now handles day and month without leading zeroes
+0.6.1  - news_request date filter now handles day and month without leading zeroes
         reports error if date components are non-numeric
 
-0.6   - added ability to filter by year/month/day on news_request
+0.6    - added ability to filter by year/month/day on news_request
 
-0.5.1 - fix for news_request returning non-news items
+0.5.1  - fix for news_request returning non-news items
         'news' is now also an allowed 'type' for az_request
 
-0.5   - added news_request
+0.5    - added news_request
 
-0.4   - added az_request and refactored search_request
+0.4    - added az_request and refactored search_request
 
-0.3.1 - corrected issue when api_request class instantiated directly in PHP
+0.3.1  - corrected issue when api_request class instantiated directly in PHP
         (note that api_request now takes array as argument which mirrors API args)
 
-0.3   - added urlParams and totalResults to search API; handles '-' in query URL
+0.3    - added urlParams and totalResults to search API; handles '-' in query URL
 
-0.2   - search API added
+0.2    - search API added
 
-0.1   - initial release with _children_ endpoint
+0.1    - initial release with _children_ endpoint
