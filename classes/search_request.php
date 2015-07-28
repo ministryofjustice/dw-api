@@ -133,10 +133,13 @@ class search_request extends api_request {
 
         if (!$api_error) {
             // Get matching results
-            $results = new WP_Query($args);
+            $results = new WP_Query();
+						$results->query_vars = $args;
             if(function_exists(relevanssi_do_query) && $this->data['keywords']!=null) {
                 relevanssi_do_query($results);
-            }
+            } else {
+								$results->query = $results->query_vars;
+						}
             $this::generate_json($results);
         }
 
@@ -145,6 +148,7 @@ class search_request extends api_request {
 
 
     function generate_json($results = array()) {
+				global $post;
 
         // Start JSON
         // URL parameters
@@ -159,15 +163,14 @@ class search_request extends api_request {
 
             $last_post = false;
             while ($results->have_posts()) {
-                global $post;
                 $results->the_post();
-                $thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'thumbnail');
+								$thumbnail = wp_get_attachment_image_src($post_thumbnail_id, 'thumbnail');
 
                 $this->results_array['results'][] = array(
                     // Page Title
-                    'title'             =>  (string) get_the_title(),
+                    'title'             =>  (string) $post->post_title,
                     // Page URL
-                    'url'               =>  (string) get_the_permalink(),
+                    'url'               =>  (string) get_the_permalink($post->ID),
                     // Page Slug
                     'slug'              =>  (string) $post->post_name,
                     // Page Excerpt
@@ -178,7 +181,7 @@ class search_request extends api_request {
                     // Timestamp
                     'timestamp'         =>  (string) get_the_time('Y-m-d H:m:s'),
                     // File URL
-                    'file_url'          =>  (string) '',
+                    'file_url'          	=>  (string) '',
                     // File name
                     'file_name'         =>  (string) '',
                     // File size

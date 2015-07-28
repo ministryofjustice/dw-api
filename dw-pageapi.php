@@ -29,6 +29,7 @@
   0.10   - children_request now returns top level items with is_top_level set to 1 if
            no parent id is given (or it is set to 0)
   0.10.1 - removed CORS header
+  0.11   - rebranded to DW API & added cache control header
  */
 
   if (!defined('ABSPATH')) {
@@ -78,8 +79,8 @@
           $this->includes();
 
             // Setup permalinks
-          add_action('wp_loaded', array(&$this, 'flush_api_permalinks'));
           add_action('init', array(&$this, 'setup_api_rewrites'), 10);
+          add_action('wp_loaded', array(&$this, 'flush_api_permalinks'));
           add_action('wp', array(&$this, 'process_api_request'), 5);
         }
 
@@ -184,6 +185,7 @@
             $json_array->results_array['results'] = array();
           }
           header('Content-Type: application/json');
+          header('Cache-Control: max-age=300, must-revalidate');
           echo json_encode($json_array->results_array);
         }
 

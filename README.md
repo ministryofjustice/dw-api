@@ -35,6 +35,8 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
+0.11   - rebranded to DW API & added cache control header
+
 0.10.1 - removed CORS header
 
 0.10   - children_request now returns top level items with is_top_level set to 1 if
