@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Plugin Name: DW PageAPI
+  Plugin Name: DW API
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
   Version: 0.10.1
@@ -29,15 +29,16 @@
   0.10   - children_request now returns top level items with is_top_level set to 1 if
            no parent id is given (or it is set to 0)
   0.10.1 - removed CORS header
+  0.11   - rebranded to DW API & added cache control header
  */
 
   if (!defined('ABSPATH')) {
     exit; // disable direct access
   }
 
-  if (!class_exists('PageAPI')) {
+  if (!class_exists('DWAPI')) {
 
-    class PageAPI {
+    class DWAPI {
 
         /**
          * @var string
@@ -45,31 +46,31 @@
         public $version = '0.9';
 
         /**
-         * Define PageAPI constants
+         * Define DW API constants
          *
          * @since 1.0
          */
         private function define_constants() {
 
-          define('PAGEAPI_VERSION', $this->version);
-          define('PAGEAPI_BASE_URL', trailingslashit(plugins_url('pageapi')));
-          define('PAGEAPI_PATH', plugin_dir_path(__FILE__));
-          define('PAGEAPI_ROOT', 'service');
+          define('DWAPI_VERSION', $this->version);
+          define('DWAPI_BASE_URL', trailingslashit(plugins_url('dwapi')));
+          define('DWAPI_PATH', plugin_dir_path(__FILE__));
+          define('DWAPI_ROOT', 'service');
         }
 
         /**
-         * All PageAPI classes
+         * All DW API classes
          *
          * @since 1.0
          */
         private function plugin_classes() {
           return array(
-            'api_request' => PAGEAPI_PATH . 'classes/api_request.php',
-            'search_request' => PAGEAPI_PATH . 'classes/search_request.php',
-            'children_request' => PAGEAPI_PATH . 'classes/children_request.php',
-            'az_request' => PAGEAPI_PATH . 'classes/az_request.php',
-            'news_request' => PAGEAPI_PATH . 'classes/news_request.php',
-            'crawl_request' => PAGEAPI_PATH . 'classes/crawl_request.php'
+            'api_request' => DWAPI_PATH . 'classes/api_request.php',
+            'search_request' => DWAPI_PATH . 'classes/search_request.php',
+            'children_request' => DWAPI_PATH . 'classes/children_request.php',
+            'az_request' => DWAPI_PATH . 'classes/az_request.php',
+            'news_request' => DWAPI_PATH . 'classes/news_request.php',
+            'crawl_request' => DWAPI_PATH . 'classes/crawl_request.php'
             );
         }
 
@@ -78,8 +79,8 @@
           $this->includes();
 
             // Setup permalinks
-          add_action('wp_loaded', array(&$this, 'flush_api_permalinks'));
           add_action('init', array(&$this, 'setup_api_rewrites'), 10);
+          add_action('wp_loaded', array(&$this, 'flush_api_permalinks'));
           add_action('wp', array(&$this, 'process_api_request'), 5);
         }
 
@@ -106,7 +107,7 @@
             add_rewrite_tag('%param' . ($i) . '%', '([^&]+)');
           }
 
-          add_rewrite_rule(PAGEAPI_ROOT . $rewrite_pattern . '/?', $rewrite_string, 'top');
+          add_rewrite_rule(DWAPI_ROOT . $rewrite_pattern . '/?', $rewrite_string, 'top');
           add_rewrite_tag('%api_action%', '([^&]+)');
 
           // global $wp_rewrite;var_dump($wp_rewrite);
@@ -122,7 +123,7 @@
 
           $rules = get_option('rewrite_rules');
 
-          if (!isset($rules['(' . PAGEAPI_ROOT . ')/(.+)$'])) {
+          if (!isset($rules['(' . DWAPI_ROOT . ')/(.+)$'])) {
             global $wp_rewrite;
             $wp_rewrite->flush_rules();
           }
@@ -148,7 +149,7 @@
               $results->results_array = array (
                 "status"    => 401,
                 "message"   => "Endpoint not valid",
-                "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+                "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
                 );
             }
             $this->output_json($results);
@@ -184,10 +185,11 @@
             $json_array->results_array['results'] = array();
           }
           header('Content-Type: application/json');
+          header('Cache-Control: max-age=300, must-revalidate');
           echo json_encode($json_array->results_array);
         }
 
       }
 
-      new PageAPI;
+      new DWAPI;
     }

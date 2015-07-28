@@ -1,4 +1,4 @@
-dw-pageapi
+DW API
 ==========
 
 WordPress plugin that lets you query the page structure through a RESTful API
@@ -8,7 +8,7 @@ These can be accessed using the form
 
 	/{plugin-root}/{endpoint}/{param_1}/.../{param_n}/
 
-The default root is _service_ but this can be changed in the code by altering the PAGEAPI_ROOT constant.
+The default root is _service_ but this can be changed in the code by altering the DWAPI_ROOT constant.
 
 * children/{page-id}/ - retrieve the immediate children of the given page
 
@@ -34,6 +34,8 @@ You can use the plugin within by PHP as follows:
 * $crawl = new crawl_request
 
 ##Release history
+
+0.11   - rebranded to DW API & added cache control header
 
 0.10.1 - removed CORS header
 
