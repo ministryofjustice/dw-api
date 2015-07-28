@@ -33,7 +33,7 @@ class api_request {
         $this->results_array = array(
             "status"    => 401,
             "message"   => "Endpoint not valid",
-            "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+            "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
         );
     }
 

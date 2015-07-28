@@ -126,7 +126,7 @@ class search_request extends api_request {
                 $this->results_array = array(
                     "status"    => 401,
                     "message"   => "Invalid date",
-                    "more_info" => "https://github.com/ministryofjustice/dw-pageapi/blob/master/README.md"
+                    "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
                 );
             }
         }
