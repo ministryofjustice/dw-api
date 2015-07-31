@@ -138,7 +138,7 @@ class search_request extends api_request {
             if(function_exists(relevanssi_do_query) && $this->data['keywords']!=null) {
                 relevanssi_do_query($results);
             } else {
-								$results->query = $results->query_vars;
+								$results = new WP_Query($args);
 						}
             $this::generate_json($results);
         }
