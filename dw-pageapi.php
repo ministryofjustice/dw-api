@@ -4,7 +4,7 @@
   Plugin Name: DW API
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.10.1
+  Version: 0.11
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
