@@ -31,7 +31,10 @@ class search_request extends api_request {
         $valid_post_types = array("page","doc","news","document"); // This should be added to as new post types are used
         if(!in_array($this->data['type'],$valid_post_types,true)) {
             if($this->data['type']==='all') {
-                $this->data['type'] = $valid_post_types;
+              $this->data['type'] = $valid_post_types;
+						} elseif ($this->data['type']==='content') {
+							$this->data['type'] = $valid_post_types;
+							$this->data['type'] = array_merge(array_diff($this->data['type'],array("doc","document")));
             } else {
                 $this->data['type'] = "page";
             }
