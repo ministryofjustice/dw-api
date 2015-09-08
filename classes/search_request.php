@@ -167,6 +167,19 @@ class search_request extends api_request {
                 $results->the_post();
 								$thumbnail = wp_get_attachment_image_src($post_thumbnail_id, 'thumbnail');
 
+								$titles = array();
+								$page_ancestors = get_post_ancestors($post->ID);
+								$num_ancestors = sizeof($page_ancestors);
+
+								if($num_ancestors) {
+									if($num_ancestors>1) {
+										$titles[] = get_post_meta($page_ancestors[$num_ancestors-1], 'nav_label',true)?:get_the_title($page_ancestors[$num_ancestors-1]);
+									}
+									$titles[] = get_post_meta($page_ancestors[$num_ancestors], 'nav_label',true)?:get_the_title($page_ancestors[$num_ancestors]);
+								} else {
+									$titles[] = ucfirst($post->post_type);
+								}
+
                 $this->results_array['results'][] = array(
                     // Page Title
                     'title'             =>  (string) $post->post_title,
@@ -182,13 +195,15 @@ class search_request extends api_request {
                     // Timestamp
                     'timestamp'         =>  (string) get_the_time('Y-m-d H:m:s'),
                     // File URL
-                    'file_url'          	=>  (string) '',
+                    'file_url'          =>  (string) '',
                     // File name
                     'file_name'         =>  (string) '',
                     // File size
                     'file_size'         =>  (int) 0,
                     // File pages
-                    'file_pages'        =>  (int) 0
+                    'file_pages'        =>  (int) 0,
+										// Result category
+										'content_type'      =>  $titles
                 );
             }
         }
