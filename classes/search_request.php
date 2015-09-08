@@ -124,7 +124,7 @@ class search_request extends api_request {
 
             }
             if (!$api_error) {
-                $args = array_merge($args,$date_args);
+                $args = array_merge($args,array('date_query' => $date_args));
             } else {
                 $this->results_array = array(
                     "status"    => 401,
@@ -134,15 +134,13 @@ class search_request extends api_request {
             }
         }
 
+
         if (!$api_error) {
             // Get matching results
-            $results = new WP_Query();
-						$results->query_vars = $args;
+            $results = new WP_Query($args);
             if(function_exists(relevanssi_do_query) && $this->data['keywords']!=null) {
                 relevanssi_do_query($results);
-            } else {
-								$results = new WP_Query($args);
-						}
+            }
             $this::generate_json($results);
         }
 
