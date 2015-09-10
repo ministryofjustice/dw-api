@@ -34,7 +34,7 @@ class children_request extends api_request {
                 'post_parent' => $post_parent,
                 'post_type' => array('page'),
                 'posts_per_page' => -1,
-                'orderby' => $this->data['orderby'] ?: 'title',
+                'orderby' => $this->data['orderby'] ?: array('menu_order','title'),
                 'order' => $this->data['order'] ?: 'asc'
             );
             if(!$post_parent) {
