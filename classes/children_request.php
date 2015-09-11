@@ -10,6 +10,8 @@ class children_request extends api_request {
 
     public static $params = array('pageid','orderby','order');
 
+    private static $post_types = array('page','webchat');
+
     function __construct($param_array) {
             // Setup vars from url params
             $this->set_params($param_array);
@@ -20,7 +22,7 @@ class children_request extends api_request {
             // Get page details
             $submenu_page = new WP_Query(array(
                 'p' => $post_parent,
-                'post_type' => array('page')
+                'post_type' => this->$post_types
             ));
             $submenu_page->the_post();
 
@@ -32,7 +34,7 @@ class children_request extends api_request {
             // Subpages Start
             $subpages_args = array(
                 'post_parent' => $post_parent,
-                'post_type' => array('page'),
+                'post_type' => this->$post_types,
                 'posts_per_page' => -1,
                 'orderby' => $this->data['orderby'] ?: array('menu_order','title'),
                 'order' => $this->data['order'] ?: 'asc'
@@ -67,11 +69,11 @@ class children_request extends api_request {
     function build_subpage($subpage_id = 0, $orderby, $order) {
         $subpage = new WP_Query(array(
             'p' => $subpage_id,
-            'post_type' => array('page')
+            'post_type' => this->$post_types
         ));
 
         $children = new WP_Query(array(
-            'post_type' => array('page'),
+            'post_type' => this->$post_types,
             'post_parent' => $subpage_id,
             'posts_per_page' => -1
         ));
