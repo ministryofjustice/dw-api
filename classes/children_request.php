@@ -26,6 +26,7 @@ class children_request extends api_request {
             ));
             $submenu_page->the_post();
 
+
             // Start JSON
             // Page name
             $this->results_array['title'] = $post_parent?get_the_title():"None";
@@ -36,7 +37,7 @@ class children_request extends api_request {
                 'post_parent' => $post_parent,
                 'post_type' => self::$post_types,
                 'posts_per_page' => -1,
-                'orderby' => $this->data['orderby'] ?: array('menu_order','title'),
+                'orderby' => $this->data['orderby'] ?: 'menu_order title',
                 'order' => $this->data['order'] ?: 'asc'
             );
             if(!$post_parent) {
