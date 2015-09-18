@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * Processes API requests for events
+ *
+ * @author ryanajarrett
+ * @since 0.4
+ */
+
+class events_request extends search_request {
+
+  public static $params = array('date','keywords','page','per_page');
+  protected $search_order = null;
+  protected $search_orderby = array(
+    'meta_fields' => true,
+    'title' => 'ASC'
+  );
+  protected $meta_fields = array(
+    '_event-start-date' => 'DESC',
+    '_event-start-time' => 'DESC',
+    '_event-end-date'   => 'DESC',
+    '_event-end-time'   => 'DESC'
+  );
+	protected $post_type  = 'event';
+
+  function generate_json($results = array()) {
+
+    // Start JSON
+    // URL parameters
+    foreach ($this::$params as $param) {
+        $this->results_array['url_params'][$param] = $this->data[$param];
+    }
+
+		if($results->have_posts()) {
+
+            // Total posts
+            $this->results_array['total_results'] = (int) $results->found_posts;
+
+            $last_post = false;
+            while ($results->have_posts()) {
+            	$results->the_post();
+              // $thumbnail_id = get_post_thumbnail_id($post->ID);
+              // $thumbnail = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
+              // $alt_text = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
+             	$this->results_array['results'][] = array(
+                    // Event Title
+                    'title' 			=>  (string) get_the_title(),
+                    // Event URL
+                    'url'   			=>  (string) get_the_permalink(),
+                    // Event Slug
+                    'slug'  			=>  (string) $results->post->post_name,
+                    // Event Location
+                    'location'   	=>  (string) get_post_meta( $results->post->ID, '_event-location', true ),
+                    // Event Description
+                    'description' =>  (string) get_the_content(),
+                    // Event Start Date
+                    'start_date'  =>  (string) get_post_meta( $results->post->ID, '_event-start-date', true ),
+                    // Event Start Time
+                    'start_time'  =>  (string) get_post_meta( $results->post->ID, '_event-start-time', true ),
+                    // Event End Date
+                    'end_date'    =>  (string) get_post_meta( $results->post->ID, '_event-end-date', true ),
+                    // Event End Time
+                    'end_time'    =>  (string) get_post_meta( $results->post->ID, '_event-end-time', true ),
+                );
+
+            }
+		}
+		// Prevent protected variables being returned
+		unset($this->search_order);
+		unset($this->search_orderby);
+		unset($this->post_type);
+		unset($this->data);
+	}
+
+}

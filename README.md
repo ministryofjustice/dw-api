@@ -35,6 +35,8 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
+0.12   - added event_request class to handle event search requests
+
 0.11   - rebranded to DW API & added cache control header
 
 0.10.1 - removed CORS header

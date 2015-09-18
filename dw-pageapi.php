@@ -4,7 +4,7 @@
   Plugin Name: DW API
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.11
+  Version: 0.12
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -30,10 +30,15 @@
            no parent id is given (or it is set to 0)
   0.10.1 - removed CORS header
   0.11   - rebranded to DW API & added cache control header
+  0.12   - added event_request class to handle event search requests
  */
 
   if (!defined('ABSPATH')) {
     exit; // disable direct access
+  }
+
+  class api_error {
+
   }
 
   if (!class_exists('DWAPI')) {
@@ -70,7 +75,8 @@
             'children_request' => DWAPI_PATH . 'classes/children_request.php',
             'az_request' => DWAPI_PATH . 'classes/az_request.php',
             'news_request' => DWAPI_PATH . 'classes/news_request.php',
-            'crawl_request' => DWAPI_PATH . 'classes/crawl_request.php'
+            'crawl_request' => DWAPI_PATH . 'classes/crawl_request.php',
+            'events_request' => DWAPI_PATH . 'classes/events_request.php'
             );
         }
 
@@ -145,7 +151,7 @@
             if (class_exists($request_class)) {
               $results = new $request_class(array());
             } else {
-                  // $results = array();
+              $results = new api_error(array());
               $results->results_array = array (
                 "status"    => 401,
                 "message"   => "Endpoint not valid",

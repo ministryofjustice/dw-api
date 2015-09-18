@@ -28,7 +28,7 @@ class search_request extends api_request {
         $this->set_params($param_array);
         $this->data['type'] = $this->post_type===null ? $this->data['type'] : $this->post_type;
         // Check search type - if not page or doc, default to page
-        $valid_post_types = array("page","doc","news","document","webchat"); // This should be added to as new post types are used
+        $valid_post_types = array("page","doc","news","document","webchat","event"); // This should be added to as new post types are used
         if(!in_array($this->data['type'],$valid_post_types,true)) {
             if($this->data['type']==='all') {
               $this->data['type'] = $valid_post_types;
@@ -70,6 +70,26 @@ class search_request extends api_request {
             $per_page = 10;
         }
 
+				// Build meta_query (and extend orderby)
+				if(isset($this->meta_fields)) {
+					$meta_query = array();
+					foreach ($this->meta_fields as $meta_field=>$meta_sort) {
+						$meta_query[$meta_field] = array(
+							'key'     => $meta_field,
+							'compare' => 'EXISTS'
+						);
+					}
+					if ($this->search_orderby['meta_fields'] == true) {
+							$temp_orderby = $this->search_orderby;
+							$keys = array_keys($this->search_orderby);
+							$index = array_search('meta_fields', $keys);
+							$first_part = array_splice($temp_orderby,0,$index);
+							$second_part = array_splice($temp_orderby,1);
+							$this->search_orderby = array_merge($first_part,$this->meta_fields,$second_part);
+							// Debug::full($this->search_orderby);
+			    }
+				}
+
         // Set up WP_Query params
         $args = array(
             // Paging
@@ -84,7 +104,8 @@ class search_request extends api_request {
             'category_name'     =>  $this->data['category'],
             's'                 =>  $this->rawurldecode($this->data['keywords']),
             // Restricts posts for first letter
-            'post__in'          =>  $postids
+            'post__in'          =>  $postids,
+						'meta_query'        =>  $meta_query
         );
 
         // If date set, work out date range
