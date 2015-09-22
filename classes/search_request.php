@@ -11,9 +11,10 @@ class search_request extends api_request {
 	public static $params = array('type','category','keywords','page','per_page');
 
     // Default search order parameters
-    protected $search_order     = 'ASC';
-    protected $search_orderby   = 'relevance';
-    protected $post_type        = null;
+    protected $search_order      = 'ASC';
+    protected $search_orderby    = 'relevance';
+    protected $post_type         = null;
+		protected $date_query_target = 'date_query';
 
   function rawurldecode($string) {
     $string = str_replace('%252F', '%2F', $string);
@@ -24,150 +25,169 @@ class search_request extends api_request {
   }
 
 	function __construct($param_array = array()) {
-        // Setup vars from url params
-        $this->set_params($param_array);
-        $this->data['type'] = $this->post_type===null ? $this->data['type'] : $this->post_type;
-        // Check search type - if not page or doc, default to page
-        $valid_post_types = array("page","doc","news","document","webchat","event"); // This should be added to as new post types are used
-        if(!in_array($this->data['type'],$valid_post_types,true)) {
-            if($this->data['type']==='all') {
-              $this->data['type'] = $valid_post_types;
-						} elseif ($this->data['type']==='content') {
-							$this->data['type'] = $valid_post_types;
-							$this->data['type'] = array_merge(array_diff($this->data['type'],array("doc","document")));
-            } else {
-                $this->data['type'] = "page";
-            }
-        }
+      // Setup vars from url params
+      $this->set_params($param_array);
+      $this->data['type'] = $this->post_type===null ? $this->data['type'] : $this->post_type;
+      // Check search type - if not page or doc, default to page
+      $valid_post_types = array("page","doc","news","document","webchat","event"); // This should be added to as new post types are used
+      if(!in_array($this->data['type'],$valid_post_types,true)) {
+          if($this->data['type']==='all') {
+            $this->data['type'] = $valid_post_types;
+					} elseif ($this->data['type']==='content') {
+						$this->data['type'] = $valid_post_types;
+						$this->data['type'] = array_merge(array_diff($this->data['type'],array("doc","document")));
+          } else {
+              $this->data['type'] = "page";
+          }
+      }
 
-        // If initial set, limit WP_Query args to matching post IDs
-        if (strlen($this->data['initial'])===1) {
-            global $wpdb;
-            $postids=$wpdb->get_col($wpdb->prepare("
-                SELECT      ID
-                FROM        $wpdb->posts
-                WHERE       SUBSTR($wpdb->posts.post_title,1,1) = %s
-                ORDER BY    $wpdb->posts.post_title",$this->data['initial'])
-            );
-            $this->search_order = 'ASC';
-            $this->search_orderby = 'title';
-        } else {
-            $postids = null;
-        }
+      // If initial set, limit WP_Query args to matching post IDs
+      if (strlen($this->data['initial'])===1) {
+          global $wpdb;
+          $postids=$wpdb->get_col($wpdb->prepare("
+              SELECT      ID
+              FROM        $wpdb->posts
+              WHERE       SUBSTR($wpdb->posts.post_title,1,1) = %s
+              ORDER BY    $wpdb->posts.post_title",$this->data['initial'])
+          );
+          $this->search_order = 'ASC';
+          $this->search_orderby = 'title';
+      } else {
+          $postids = null;
+      }
 
-        // Set paging options
-        $nopaging = true;
-        if(is_numeric($this->data['page'])) {
-            $paged = $this->data['page'];
-            $nopaging = false;
-        } else {
-            $paged = null;
-        }
-        if(is_numeric($this->data['per_page'])) {
-            $per_page =  $this->data['per_page'];
-            $nopaging = false;
-        } else {
-            $per_page = 10;
-        }
+      // Set paging options
+      $nopaging = true;
+      if(is_numeric($this->data['page'])) {
+          $paged = $this->data['page'];
+          $nopaging = false;
+      } else {
+          $paged = null;
+      }
+      if(is_numeric($this->data['per_page'])) {
+          $per_page =  $this->data['per_page'];
+          $nopaging = false;
+      } else {
+          $per_page = 10;
+      }
 
-				// Build meta_query (and extend orderby)
-				if(isset($this->meta_fields)) {
-					$meta_query = array();
-					foreach ($this->meta_fields as $meta_field=>$meta_sort) {
+			// Build meta_query (and extend orderby)
+			if(isset($this->meta_fields)) {
+				$meta_query = array();
+				foreach ($this->meta_fields as $meta_field=>$meta_sort) {
+					if(!in_array($meta_field, $this->date_query_target)) {
 						$meta_query[$meta_field] = array(
 							'key'     => $meta_field,
 							'compare' => 'EXISTS'
 						);
 					}
-					if ($this->search_orderby['meta_fields'] == true) {
-							$temp_orderby = $this->search_orderby;
-							$keys = array_keys($this->search_orderby);
-							$index = array_search('meta_fields', $keys);
-							$first_part = array_splice($temp_orderby,0,$index);
-							$second_part = array_splice($temp_orderby,1);
-							$this->search_orderby = array_merge($first_part,$this->meta_fields,$second_part);
-							// Debug::full($this->search_orderby);
-			    }
 				}
+				if ($this->search_orderby['meta_fields'] == true) {
+						$temp_orderby = $this->search_orderby;
+						$keys = array_keys($this->search_orderby);
+						$index = array_search('meta_fields', $keys);
+						$first_part = array_splice($temp_orderby,0,$index);
+						$second_part = array_splice($temp_orderby,1);
+						$this->search_orderby = array_merge($first_part,$this->meta_fields,$second_part);
+		    }
+			}
 
-        // Set up WP_Query params
-        $args = array(
-            // Paging
-            'nopaging'          =>  $nopaging,
-            'paged'             =>  $paged,
-            'posts_per_page'    =>  $per_page,
-            // Sorting
-            'order'             =>  $this->search_order,
-            'orderby'           =>  $this->search_orderby,
-            // Filters
-            'post_type'         =>  $this->data['type'],
-            'category_name'     =>  $this->data['category'],
-            's'                 =>  $this->rawurldecode($this->data['keywords']),
-            // Restricts posts for first letter
-            'post__in'          =>  $postids,
-						'meta_query'        =>  $meta_query
-        );
+      // If date set, work out date range
+      if (isset($this->data['date'])) {
+          $date_args = $this::parse_date($this->data['date']);
+          if ($date_args) {
+						if($this->date_query_target=='date_query') {
+              $args = array_merge($args,array('date_query' => $date_args));
+						} else {
+							$meta_query_or['relation'] = 'OR';
+							foreach ($this->date_query_target as $meta_field) {
+								$meta_query_or[] = array(
+									'key'     => $meta_field,
+									'value'   => $this->data['date'],
+									'compare' => 'LIKE'
+								);
+							}
+						}
+						$meta_query[] = $meta_query_or;
 
-        // If date set, work out date range
-        if (isset($this->data['date'])) {
-            $query_date = $this->data['date'];
-            // Get length of date string
-            $date_length = strlen($query_date);
-            $date_array = explode("-", $query_date);
-            foreach($date_array as $date_component) {
-                $api_error = !is_numeric($date_component) ?: false;
-            }
-            // Act depending on length of date
-            switch($date_length) {
-                case 4: // Year
-                    $date_args = array(
-                        'year'  =>  $date_array[0]
-                    );
-                    break;
-                case 6:
-                case 7: // Year/Month
-                    $date_args = array(
-                        'year'  =>  $date_array[0],
-                        'monthnum' =>  $date_array[1]
-                    );
-                break;
-                case 8:
-                case 9:
-                case 10: // Year/Month/Day
-                    $date_args = array(
-                        'year'  =>  $date_array[0],
-                        'monthnum' =>  $date_array[1],
-                        'day'   =>  $date_array[2]
-                    );
-                break;
-                default: // Invalid dates
-                    $api_error = true;
+          } else {
+						$api_error = true;
+            $this->results_array = array(
+                "status"    => 401,
+                "message"   => "Invalid date",
+                "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
+            );
+          }
+      }
 
-            }
-            if (!$api_error) {
-                $args = array_merge($args,array('date_query' => $date_args));
-            } else {
-                $this->results_array = array(
-                    "status"    => 401,
-                    "message"   => "Invalid date",
-                    "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
-                );
-            }
-        }
+			// Set up WP_Query params
+			$args = array(
+					// Paging
+					'nopaging'          =>  $nopaging,
+					'paged'             =>  $paged,
+					'posts_per_page'    =>  $per_page,
+					// Sorting
+					'order'             =>  $this->search_order,
+					'orderby'           =>  $this->search_orderby,
+					// Filters
+					'post_type'         =>  $this->data['type'],
+					'category_name'     =>  $this->data['category'],
+					's'                 =>  $this->rawurldecode($this->data['keywords']),
+					// Restricts posts for first letter
+					'post__in'          =>  $postids,
+					'meta_query'        =>  $meta_query
+			);
 
+      if (!$api_error) {
+          // Get matching results
+          $results = new WP_Query($args);
+          if(function_exists(relevanssi_do_query) && $this->data['keywords']!=null) {
+              relevanssi_do_query($results);
+          }
+          $this::generate_json($results);
+      }
 
-        if (!$api_error) {
-            // Get matching results
-            $results = new WP_Query($args);
-            if(function_exists(relevanssi_do_query) && $this->data['keywords']!=null) {
-                relevanssi_do_query($results);
-            }
-            $this::generate_json($results);
-        }
-
-        return($this->results_array);
+      return($this->results_array);
 	}
 
+	function parse_date($query_date) {
+		// Get length of date string
+		$date_length = strlen($query_date);
+		$date_array = explode("-", $query_date);
+		foreach($date_array as $date_component) {
+				if (!is_numeric($date_component)) {
+					return false;
+				}
+		}
+		// Act depending on length of date
+		switch($date_length) {
+			case 4: // Year
+				$date_args = array(
+					'year'  =>  $date_array[0]
+				);
+				break;
+			case 6:
+			case 7: // Year/Month
+				$date_args = array(
+					'year'  =>  $date_array[0],
+					'monthnum' =>  $date_array[1]
+				);
+				break;
+			case 8:
+			case 9:
+			case 10: // Year/Month/Day
+				$date_args = array(
+					'year'  =>  $date_array[0],
+					'monthnum' =>  $date_array[1],
+					'day'   =>  $date_array[2]
+				);
+				break;
+			default: // Invalid dates
+				$date_args = false;
+
+		}
+		return $date_args;
+	}
 
     function generate_json($results = array()) {
 				global $post;
@@ -209,7 +229,6 @@ class search_request extends api_request {
                     // Page Slug
                     'slug'              =>  (string) $post->post_name,
                     // Page Excerpt
-                    // 'excerpt'           =>  get_the_excerpt( ),
                     'excerpt'           =>  (string) $post->post_excerpt,
                     // Featured Image
                     'thumbnail_url'     =>  (string) $thumbnail[0],
