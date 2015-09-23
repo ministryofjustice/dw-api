@@ -92,30 +92,12 @@ class search_request extends api_request {
 		    }
 			}
 
-			// Set up WP_Query params
-			$args = array(
-					// Paging
-					'nopaging'          =>  $nopaging,
-					'paged'             =>  $paged,
-					'posts_per_page'    =>  $per_page,
-					// Sorting
-					'order'             =>  $this->search_order,
-					'orderby'           =>  $this->search_orderby,
-					// Filters
-					'post_type'         =>  $this->data['type'],
-					'category_name'     =>  $this->data['category'],
-					's'                 =>  $this->rawurldecode($this->data['keywords']),
-					// Restricts posts for first letter
-					'post__in'          =>  $postids,
-					'meta_query'        =>  $meta_query
-			);
-
       // If date set, work out date range
       if (isset($this->data['date'])) {
           $date_args = $this::parse_date($this->data['date']);
           if ($date_args) {
 						if($this->date_query_target=='date_query') {
-              $args = array_merge($args,array('date_query' => $date_args));
+              $date_query = $date_args;
 						} else {
 							$meta_query_or['relation'] = 'OR';
 							foreach ($this->date_query_target as $meta_field) {
@@ -137,6 +119,25 @@ class search_request extends api_request {
             );
           }
       }
+
+			// Set up WP_Query params
+			$args = array(
+					// Paging
+					'nopaging'          =>  $nopaging,
+					'paged'             =>  $paged,
+					'posts_per_page'    =>  $per_page,
+					// Sorting
+					'order'             =>  $this->search_order,
+					'orderby'           =>  $this->search_orderby,
+					// Filters
+					'post_type'         =>  $this->data['type'],
+					'category_name'     =>  $this->data['category'],
+					's'                 =>  $this->rawurldecode($this->data['keywords']),
+					// Restricts posts for first letter
+					'post__in'          =>  $postids,
+					'meta_query'        =>  $meta_query,
+					'date_query'        =>  $date_query
+			);
 
       if (!$api_error) {
           // Get matching results
