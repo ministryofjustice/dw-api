@@ -93,8 +93,9 @@ class search_request extends api_request {
 			}
 
       // If date set, work out date range
-      if (isset($this->data['date'])) {
-          $date_args = $this::parse_date($this->data['date']);
+      if (isset($this->data['date']) || isset($this->fallback_date)) {
+					$query_date = $this->data['date']?:(isset($this->fallback_date)!='today'?:date('Y-m-d'));
+          $date_args = $this::parse_date($query_date);
           if ($date_args) {
 						if($this->date_query_target=='date_query') {
               $date_query = $date_args;
@@ -103,13 +104,13 @@ class search_request extends api_request {
 							foreach ($this->date_query_target as $meta_field) {
 								$meta_query_or[] = array(
 									'key'     => $meta_field,
-									'value'   => $this->data['date'],
-									'compare' => 'LIKE'
+									'value'   => $query_date,
+									'type'    => 'date',
+									'compare' => $this->data['date']?'LIKE':'>='
 								);
 							}
 						}
 						$meta_query[] = $meta_query_or;
-
           } else {
 						$api_error = true;
             $this->results_array = array(

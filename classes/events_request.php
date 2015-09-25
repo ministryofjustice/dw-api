@@ -16,13 +16,14 @@ class events_request extends search_request {
     'title' => 'ASC'
   );
   protected $meta_fields = array(
-    '_event-start-date' => 'DESC',
-    '_event-start-time' => 'DESC',
-    '_event-end-date'   => 'DESC',
-    '_event-end-time'   => 'DESC'
+    '_event-start-date' => 'ASC',
+    '_event-start-time' => 'ASC',
+    '_event-end-date'   => 'ASC',
+    '_event-end-time'   => 'ASC'
   );
 	protected $post_type  = 'event';
   protected $date_query_target = array('_event-start-date', '_event-end-date');
+  protected $fallback_date = 'today';
 
   function generate_json($results = array()) {
 
