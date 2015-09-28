@@ -159,6 +159,7 @@
                 );
             }
             $this->output_json($results);
+            wp_reset_query();
             exit;
           }
         }
