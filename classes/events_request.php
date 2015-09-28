@@ -17,9 +17,7 @@ class events_request extends search_request {
   );
   protected $meta_fields = array(
     '_event-start-date' => 'ASC',
-    '_event-start-time' => 'ASC',
     '_event-end-date'   => 'ASC',
-    '_event-end-time'   => 'ASC'
   );
 	protected $post_type  = 'event';
   protected $date_query_target = array('_event-start-date', '_event-end-date');
@@ -41,9 +39,6 @@ class events_request extends search_request {
       $last_post = false;
       while ($results->have_posts()) {
       	$results->the_post();
-        // $thumbnail_id = get_post_thumbnail_id($post->ID);
-        // $thumbnail = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
-        // $alt_text = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
        	$this->results_array['results'][] = array(
           // Event Title
           'title' 			=>  (string) get_the_title(),
@@ -64,7 +59,6 @@ class events_request extends search_request {
           // Event End Time
           'end_time'    =>  (string) get_post_meta( $results->post->ID, '_event-end-time', true ),
         );
-
       }
 		}
 
