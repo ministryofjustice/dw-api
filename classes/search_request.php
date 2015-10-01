@@ -144,7 +144,7 @@ class search_request extends api_request {
 						$compare_value[] = $query_date[0];
 					}
 				}	else {
-					$compare_value = $date_comparator!='today'?$date_comparator:date('Y-m-d');
+					$compare_value = $query_date!='today'?$query_date:date('Y-m-d');
 				}
 				foreach ($this->date_query_target as $meta_field) {
 					$meta_query_or[] = array(
