@@ -4,7 +4,7 @@
  * Processes API requests for events
  *
  * @author ryanajarrett
- * @since 0.4
+ * @since 0.12
  */
 
 class events_request extends search_request {
