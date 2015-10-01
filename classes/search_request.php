@@ -92,34 +92,7 @@ class search_request extends api_request {
 		    }
 			}
 
-      // If date set, work out date range
-      if (isset($this->data['date']) || isset($this->fallback_date)) {
-					$query_date = $this->data['date']?:(isset($this->fallback_date)!='today'?:date('Y-m-d'));
-          $date_args = $this::parse_date($query_date);
-          if ($date_args) {
-						if($this->date_query_target=='date_query') {
-              $date_query = $date_args;
-						} else {
-							$meta_query_or['relation'] = 'OR';
-							foreach ($this->date_query_target as $meta_field) {
-								$meta_query_or[] = array(
-									'key'     => $meta_field,
-									'value'   => $query_date,
-									'type'    => 'date',
-									'compare' => $this->data['date']?'LIKE':'>='
-								);
-							}
-						}
-						$meta_query[] = $meta_query_or;
-          } else {
-						$api_error = true;
-            $this->results_array = array(
-                "status"    => 401,
-                "message"   => "Invalid date",
-                "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
-            );
-          }
-      }
+			$meta_query[] = $this->create_date_query();
 
 			// Set up WP_Query params
 			$args = array(
@@ -150,6 +123,40 @@ class search_request extends api_request {
       }
 
       return($this->results_array);
+	}
+
+	function create_date_query() {
+		// If date set, work out date range
+		if (isset($this->data['date']) || isset($this->fallback_date)) {
+			$query_date = $this->data['date']?:($this->fallback_date!='today'?$this->fallback_date:date('Y-m-d'));
+			if($this->date_query_target=='date_query') {
+				$date_args = $this::parse_date($query_date);
+				$date_query = $date_args;
+			} else {
+				$meta_query_or['relation'] = 'OR';
+				if(is_array($query_date)) {
+					if($query_date[0] == 'today') {
+						$compare = 'BETWEEN';
+						$compare_value[] = date('Y-m-d');
+						$compare_value[] = date('Y-m-t',strtotime("+".$query_date[1]." month"));
+					} else {
+						$compare = $this->data['date']?'LIKE':'>=';
+						$compare_value[] = $query_date[0];
+					}
+				}	else {
+					$compare_value = $date_comparator!='today'?$date_comparator:date('Y-m-d');
+				}
+				foreach ($this->date_query_target as $meta_field) {
+					$meta_query_or[] = array(
+						'key'     => $meta_field,
+						'value'   => $compare_value,
+						'type'    => 'date',
+						'compare' => $compare
+					);
+				}
+			}
+			return $meta_query_or;
+		}
 	}
 
 	function parse_date($query_date) {

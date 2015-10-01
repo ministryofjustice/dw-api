@@ -4,7 +4,7 @@
   Plugin Name: DW API
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.12
+  Version: 0.13
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -31,6 +31,7 @@
   0.10.1 - removed CORS header
   0.11   - rebranded to DW API & added cache control header
   0.12   - added event_request class to handle event search requests
+  0.13   - added months_class to return count of posts by month (up to 12 months from current date)
  */
 
   if (!defined('ABSPATH')) {
@@ -48,7 +49,7 @@
         /**
          * @var string
          */
-        public $version = '0.9';
+        public $version = '0.13';
 
         /**
          * Define DW API constants
@@ -69,15 +70,11 @@
          * @since 1.0
          */
         private function plugin_classes() {
-          return array(
-            'api_request' => DWAPI_PATH . 'classes/api_request.php',
-            'search_request' => DWAPI_PATH . 'classes/search_request.php',
-            'children_request' => DWAPI_PATH . 'classes/children_request.php',
-            'az_request' => DWAPI_PATH . 'classes/az_request.php',
-            'news_request' => DWAPI_PATH . 'classes/news_request.php',
-            'crawl_request' => DWAPI_PATH . 'classes/crawl_request.php',
-            'events_request' => DWAPI_PATH . 'classes/events_request.php'
-            );
+          $api_classes = array('api','search','children','az','news','crawl','events','months');
+          foreach ($api_classes as $api_class) {
+            $class_definitions[$api_class.'_request'] = DWAPI_PATH . 'classes/'.$api_class.'_request.php';
+          }
+          return $class_definitions;
         }
 
         public function __construct() {
@@ -156,7 +153,7 @@
                 "status"    => 401,
                 "message"   => "Endpoint not valid",
                 "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
-                );
+              );
             }
             $this->output_json($results);
             wp_reset_query();
