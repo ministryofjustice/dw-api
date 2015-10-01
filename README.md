@@ -18,6 +18,10 @@ The default root is _service_ but this can be changed in the code by altering th
 
 * search/{type}/{category}/{plus+seperated+keywords}/{page}/{per-page} - searches all site content
 
+* events/{date}/{keywords}/{page}/{per-page} - searches events
+
+* months/{post-type} - produces list of months (by default 12) with post count
+
 * crawl/ - returns pages that have a redirect url
 
 ##Direct use
@@ -31,9 +35,15 @@ You can use the plugin within by PHP as follows:
 
 * $search = new search_request ({type},{category},{plus+seperated+keywords},{page},{per-page})
 
+* $events = new events_request ({date},{keywords},{page},{per-page})
+
+* $months = new months_request ({post-type})
+
 * $crawl = new crawl_request
 
 ##Release history
+
+0.13   - added months_class to return count of posts by month (up to 12 months from current date)
 
 0.12   - added event_request class to handle event search requests
 
