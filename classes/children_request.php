@@ -85,7 +85,7 @@ class children_request extends api_request {
         // Subpage ID
         $subpage_array['id'] = $subpage_id;
         // Subpage Title
-        $subpage_array['title'] = get_the_title();
+        $subpage_array['title'] = preg_replace('/(.*: ?)/i', "", get_the_title());
         // Subpage URL
         $subpage_array['url'] = get_the_permalink();
         // Subpage Slug
