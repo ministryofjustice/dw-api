@@ -25,6 +25,8 @@ class search_request extends api_request {
   }
 
 	function __construct($param_array = array()) {
+		global $dw_global_orderby;
+		
       // Setup vars from url params
       $this->set_params($param_array);
       $this->data['type'] = $this->post_type===null ? $this->data['type'] : $this->post_type;
@@ -83,12 +85,27 @@ class search_request extends api_request {
 					}
 				}
 				if ($this->search_orderby['meta_fields'] == true) {
-						$temp_orderby = $this->search_orderby;
+						global $dw_global_orderby;
 						$keys = array_keys($this->search_orderby);
 						$index = array_search('meta_fields', $keys);
-						$first_part = array_splice($temp_orderby,0,$index);
-						$second_part = array_splice($temp_orderby,1);
-						$this->search_orderby = array_merge($first_part,$this->meta_fields,$second_part);
+						$first_part = array_splice($this->search_orderby,0,$index);
+						$second_part = array_splice($this->search_orderby,1);
+						$new_orderby = array_merge($first_part,$this->meta_fields,$second_part);
+						// Set global var to overide orderby
+						end($new_orderby);
+						$last = key($new_orderby);
+						$mt_count=0;
+						foreach ($new_orderby as $field=>$order) {
+							if(!in_array($field, $keys)) {
+								$mt_count++;
+								$dw_global_orderby .= "mt".$mt_count.".meta_value" . " " . $order;
+							} else {
+								$dw_global_orderby .= "'".$field."'" . " " . $order;
+							}
+							$dw_global_orderby .= ($field === $last?"":", ");
+						}
+
+						$this->search_orderby = $new_orderby;
 		    }
 			}
 
@@ -116,11 +133,17 @@ class search_request extends api_request {
       if (!$api_error) {
           // Get matching results
           $results = new WP_Query($args);
+					if($_GET['debug']) {
+						Debug::full($results->query);
+						Debug::full($results->request);
+					}
           if(function_exists(relevanssi_do_query) && $this->data['keywords']!=null) {
               relevanssi_do_query($results);
           }
           $this::generate_json($results);
       }
+
+			unset($dw_global_orderby);
 
       return($this->results_array);
 	}
@@ -134,6 +157,7 @@ class search_request extends api_request {
 				$date_query = $date_args;
 			} else {
 				$meta_query_or['relation'] = 'OR';
+				$meta_query_and['relation'] = 'AND';
 				$compare = $this->data['date']?'LIKE':'>=';
 				if(is_array($query_date)) {
 					if($query_date[0] == 'today') {
@@ -153,9 +177,12 @@ class search_request extends api_request {
 						'type'    => 'date',
 						'compare' => $compare
 					);
+					$meta_query_and[] = array(
+						'key'     => $meta_field
+					);
 				}
 			}
-			return $meta_query_or;
+			return array($meta_query_or,$meta_query_and);
 		}
 	}
 

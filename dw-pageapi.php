@@ -188,14 +188,28 @@
             $json_array->results_array['total_results'] = 0;
             $json_array->results_array['results'] = array();
           }
-          header('Content-Type: application/json');
-          header('Cache-Control: public, max-age=30');
-          header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30));
-          header_remove("Pragma");
-          echo json_encode($json_array->results_array);
+          if(!$_GET['debug']) {
+            header('Content-Type: application/json');
+            header('Cache-Control: public, max-age=30');
+            header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30));
+            header_remove("Pragma");
+            echo json_encode($json_array->results_array);
+          } else {
+            Debug::full($json_array->results_array);
+          }
         }
 
       }
 
       new DWAPI;
     }
+
+function dw_posts_orderby($orderby) {
+  global $dw_global_orderby;
+  if ( $dw_global_orderby && $orderby ) {
+	   $orderby = $dw_global_orderby;
+	}
+  return ( $orderby ) ? $orderby : '';
+}
+
+add_filter( 'posts_orderby', 'dw_posts_orderby' );
