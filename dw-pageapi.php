@@ -189,7 +189,9 @@
             $json_array->results_array['results'] = array();
           }
           header('Content-Type: application/json');
-          header('Cache-Control: max-age=300, must-revalidate');
+          header('Cache-Control: public, max-age=30');
+          header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30));
+          header_remove("Pragma");
           echo json_encode($json_array->results_array);
         }
 
