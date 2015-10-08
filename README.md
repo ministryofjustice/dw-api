@@ -43,9 +43,11 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
-0.13   - added months_class to return count of posts by month (up to 12 months from current date)
+0.14   - added months_class to return count of posts by month (up to 12 months from current date)
 
-0.12   - added event_request class to handle event search requests
+0.13   - added event_request class to handle event search requests
+
+0.12   - modify children_request to ignore text before colon in title
 
 0.11   - rebranded to DW API & added cache control header
 

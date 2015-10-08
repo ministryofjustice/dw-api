@@ -4,7 +4,7 @@
   Plugin Name: DW API
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.13
+  Version: 0.14
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -30,8 +30,9 @@
            no parent id is given (or it is set to 0)
   0.10.1 - removed CORS header
   0.11   - rebranded to DW API & added cache control header
-  0.12   - added event_request class to handle event search requests
-  0.13   - added months_class to return count of posts by month (up to 12 months from current date)
+  0.12   - modify children_request to ignore text before colon in title
+  0.13   - added event_request class to handle event search requests
+  0.14   - added months_class to return count of posts by month (up to 12 months from current date)
  */
 
   if (!defined('ABSPATH')) {
@@ -49,7 +50,7 @@
         /**
          * @var string
          */
-        public $version = '0.13';
+        public $version = '0.14';
 
         /**
          * Define DW API constants
