@@ -61,9 +61,9 @@ class events_request extends search_request {
           // Event End Time
           'end_time'    =>  (string) get_post_meta( $results->post->ID, '_event-end-time', true ),
           // Event All Day Flag
-          'allday'      =>  (string) get_post_meta( $results->post->ID, '_event-allday', true )=='allday'?'true':'false',
+          'all_day'     =>  (string) get_post_meta( $results->post->ID, '_event-allday', true )=='allday'?'true':'false',
           // Event Same Day Flag
-          'same-day'    =>  (string) $start_date===$end_date?'true':'false',
+          'multiday'    =>  (string) $start_date!==$end_date?'true':'false',
         );
       }
 		}
