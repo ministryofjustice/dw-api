@@ -35,6 +35,8 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
+0.12   - modify children_request to ignore text before colon in title
+
 0.11   - rebranded to DW API & added cache control header
 
 0.10.1 - removed CORS header

@@ -4,7 +4,7 @@
   Plugin Name: DW API
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.11
+  Version: 0.12
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -30,6 +30,7 @@
            no parent id is given (or it is set to 0)
   0.10.1 - removed CORS header
   0.11   - rebranded to DW API & added cache control header
+  0.12   - modify children_request to ignore text before colon in title
  */
 
   if (!defined('ABSPATH')) {
@@ -43,7 +44,7 @@
         /**
          * @var string
          */
-        public $version = '0.9';
+        public $version = '0.12';
 
         /**
          * Define DW API constants
