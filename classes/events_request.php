@@ -39,6 +39,8 @@ class events_request extends search_request {
       $last_post = false;
       while ($results->have_posts()) {
       	$results->the_post();
+        $start_date = get_post_meta( $results->post->ID, '_event-start-date', true );
+        $end_date = get_post_meta( $results->post->ID, '_event-end-date', true );
        	$this->results_array['results'][] = array(
           // Event Title
           'title' 			=>  (string) get_the_title(),
@@ -51,13 +53,17 @@ class events_request extends search_request {
           // Event Description
           'description' =>  (string) get_the_content(),
           // Event Start Date
-          'start_date'  =>  (string) get_post_meta( $results->post->ID, '_event-start-date', true ),
+          'start_date'  =>  (string) $start_date,
           // Event Start Time
           'start_time'  =>  (string) get_post_meta( $results->post->ID, '_event-start-time', true ),
           // Event End Date
-          'end_date'    =>  (string) get_post_meta( $results->post->ID, '_event-end-date', true ),
+          'end_date'    =>  (string) $end_date,
           // Event End Time
           'end_time'    =>  (string) get_post_meta( $results->post->ID, '_event-end-time', true ),
+          // Event All Day Flag
+          'allday'      =>  (string) get_post_meta( $results->post->ID, '_event-allday', true )=='allday'?'true':'false',
+          // Event Same Day Flag
+          'same-day'    =>  (string) $start_date===$end_date?'true':'false',
         );
       }
 		}
