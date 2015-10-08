@@ -32,15 +32,18 @@ class months_request extends search_request {
         $this->results_array['url_params'][$param] = $this->data[$param];
     }
 
-		if($results->have_posts()) {
+    // Set default total_results
+    $this->results_array['total_results'] = 0;
 
+    $months_array = array();
+    for ($x=0;$x<12;$x++) {
+      $this->results_array['results'][date('Y-m-01',strtotime("+$x month"))]=0;
+    }
+
+		if($results->have_posts()) {
       // Total posts
       $this->results_array['total_results'] = (int) $results->found_posts;
 
-      $months_array = array();
-      for ($x=0;$x<12;$x++) {
-        $this->results_array['results'][date('Y-m-01',strtotime("+$x month"))]=0;
-      }
       while ($results->have_posts()) {
       	$results->the_post();
         $start_date = get_post_meta($results->post->ID,'_event-start-date',true);
