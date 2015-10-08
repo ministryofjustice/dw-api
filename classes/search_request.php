@@ -26,7 +26,7 @@ class search_request extends api_request {
 
 	function __construct($param_array = array()) {
 		global $dw_global_orderby;
-		
+
       // Setup vars from url params
       $this->set_params($param_array);
       $this->data['type'] = $this->post_type===null ? $this->data['type'] : $this->post_type;
@@ -143,7 +143,7 @@ class search_request extends api_request {
           $this::generate_json($results);
       }
 
-			unset($dw_global_orderby);
+			$dw_global_orderby='';
 
       return($this->results_array);
 	}
