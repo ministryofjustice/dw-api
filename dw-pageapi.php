@@ -4,7 +4,7 @@
   Plugin Name: DW API
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.12
+  Version: 0.14
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -31,10 +31,16 @@
   0.10.1 - removed CORS header
   0.11   - rebranded to DW API & added cache control header
   0.12   - modify children_request to ignore text before colon in title
+  0.13   - added event_request class to handle event search requests
+  0.14   - added months_class to return count of posts by month (up to 12 months from current date)
  */
 
   if (!defined('ABSPATH')) {
     exit; // disable direct access
+  }
+
+  class api_error {
+
   }
 
   if (!class_exists('DWAPI')) {
@@ -44,7 +50,7 @@
         /**
          * @var string
          */
-        public $version = '0.12';
+        public $version = '0.14';
 
         /**
          * Define DW API constants
@@ -65,14 +71,11 @@
          * @since 1.0
          */
         private function plugin_classes() {
-          return array(
-            'api_request' => DWAPI_PATH . 'classes/api_request.php',
-            'search_request' => DWAPI_PATH . 'classes/search_request.php',
-            'children_request' => DWAPI_PATH . 'classes/children_request.php',
-            'az_request' => DWAPI_PATH . 'classes/az_request.php',
-            'news_request' => DWAPI_PATH . 'classes/news_request.php',
-            'crawl_request' => DWAPI_PATH . 'classes/crawl_request.php'
-            );
+          $api_classes = array('api','search','children','az','news','crawl','events','months');
+          foreach ($api_classes as $api_class) {
+            $class_definitions[$api_class.'_request'] = DWAPI_PATH . 'classes/'.$api_class.'_request.php';
+          }
+          return $class_definitions;
         }
 
         public function __construct() {
@@ -146,14 +149,15 @@
             if (class_exists($request_class)) {
               $results = new $request_class(array());
             } else {
-                  // $results = array();
+              $results = new api_error(array());
               $results->results_array = array (
                 "status"    => 401,
                 "message"   => "Endpoint not valid",
                 "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
-                );
+              );
             }
             $this->output_json($results);
+            wp_reset_query();
             exit;
           }
         }
@@ -185,14 +189,28 @@
             $json_array->results_array['total_results'] = 0;
             $json_array->results_array['results'] = array();
           }
-          header('Content-Type: application/json');
-          header('Cache-Control: public, max-age=30');
-          header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30));
-          header_remove("Pragma");
-          echo json_encode($json_array->results_array);
+          if(!$_GET['debug']) {
+            header('Content-Type: application/json');
+            header('Cache-Control: public, max-age=30');
+            header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30));
+            header_remove("Pragma");
+            echo json_encode($json_array->results_array);
+          } else {
+            Debug::full($json_array->results_array);
+          }
         }
 
       }
 
       new DWAPI;
     }
+
+function dw_posts_orderby($orderby) {
+  global $dw_global_orderby;
+  if ( $dw_global_orderby && $orderby ) {
+	   $orderby = $dw_global_orderby;
+	}
+  return ( $orderby ) ? $orderby : '';
+}
+
+add_filter( 'posts_orderby', 'dw_posts_orderby' );
