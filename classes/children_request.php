@@ -59,6 +59,9 @@ class children_request extends api_request {
             // Subpages End
             // End JSON
 
+            // Force alpha sort on results
+            usort($this->results_array['results'],array($this,'sortByTitle'));
+
             return($this->results_array);
     }
 
@@ -85,7 +88,7 @@ class children_request extends api_request {
         // Subpage ID
         $subpage_array['id'] = $subpage_id;
         // Subpage Title - ignores content before colon
-        $subpage_array['title'] = preg_replace('/(.*:\s*)/', "", get_the_title());
+        $subpage_array['title'] = $this->filter_titles(get_the_title());
         // Subpage URL
         $subpage_array['url'] = get_the_permalink();
         // Subpage Slug
@@ -102,6 +105,14 @@ class children_request extends api_request {
         $subpage_array['status'] = $subpage->posts[0]->post_status;
         // Subpage End
         return $subpage_array;
+    }
+
+    function sortByTitle($a, $b) {
+      return strcmp(strtolower($a['title']), strtolower($b['title']));
+    }
+
+    public function filter_titles($title) {
+      return preg_replace('/(.*:\s*)/', "", $title);
     }
 
 }
