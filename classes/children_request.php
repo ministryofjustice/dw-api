@@ -60,7 +60,7 @@ class children_request extends api_request {
             // End JSON
 
             // Force alpha sort on results
-            usort($this->results_array['results'],array($this,'sortByTitle'));
+            usort($this->results_array['results'],array($this,'sort_by_title'));
 
             return($this->results_array);
     }
@@ -107,8 +107,8 @@ class children_request extends api_request {
         return $subpage_array;
     }
 
-    function sortByTitle($a, $b) {
-      return strcmp(strtolower($a['title']), strtolower($b['title']));
+    function sort_by_title($a, $b) {
+      return strnatcmp(strtolower($a['title']), strtolower($b['title']));
     }
 
     public function filter_titles($title) {
