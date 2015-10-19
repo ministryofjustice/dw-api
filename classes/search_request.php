@@ -109,7 +109,13 @@ class search_request extends api_request {
 	    }
 		}
 
-		$meta_query[] = $this->create_date_query();
+		$query_date = $this->data['date']?:($this->fallback_date!='today'?$this->fallback_date:date('Y-m-d'));
+		if(!is_array($query_date)) {
+			$date_args = $this::parse_date($query_date);
+			$date_query = $date_args;
+		}
+
+		$meta_query[] = $this->create_date_query($query_date);
 
 		// Set up WP_Query params
 		$args = array(
@@ -148,14 +154,10 @@ class search_request extends api_request {
     return($this->results_array);
 	}
 
-	function create_date_query() {
+	function create_date_query($query_date) {
 		// If date set, work out date range
 		if (isset($this->data['date']) || isset($this->fallback_date)) {
-			$query_date = $this->data['date']?:($this->fallback_date!='today'?$this->fallback_date:date('Y-m-d'));
-			if($this->date_query_target=='date_query') {
-				$date_args = $this::parse_date($query_date);
-				$date_query = $date_args;
-			} else {
+			if($this->date_query_target!='date_query') {
 				$meta_query_or['relation'] = 'OR';
 				$meta_query_and['relation'] = 'AND';
 				$compare = $this->data['date']?'LIKE':'>=';
