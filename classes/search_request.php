@@ -160,12 +160,13 @@ class search_request extends api_request {
 				$meta_query_and['relation'] = 'AND';
 				$compare = $this->data['date']?'LIKE':'>=';
 				if(is_array($query_date)) {
+					$compare = 'BETWEEN';
 					if($query_date[0] == 'today') {
-						$compare = 'BETWEEN';
 						$compare_value[] = date('Y-m-d');
 						$compare_value[] = date('Y-m-t',strtotime("+".$query_date[1]." month"));
 					} else {
 						$compare_value[] = $query_date[0];
+						$compare_value[] = date('Y-m-t',strtotime("+".$query_date[1]." month"));
 					}
 				}	else {
 					$compare_value = $query_date!='today'?$query_date:date('Y-m-d');
