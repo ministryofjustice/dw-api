@@ -27,30 +27,30 @@ class crawl_request extends search_request {
 
     if($results->have_posts()) {
 
-            // Total posts
-            // $this->results_array['totalResults'] = $results->found_posts;
+      // Total posts
+      // $this->results_array['totalResults'] = $results->found_posts;
 
-            $site_url = get_site_url();
-            $last_post = false;
-            while ($results->have_posts()) {
-              $results->the_post();
+      $site_url = get_site_url();
+      $last_post = false;
+      while ($results->have_posts()) {
+        $results->the_post();
 
-              $post_id = get_the_id();
+        $post_id = get_the_id();
 
-              $redirect_url = get_post_meta( $post_id, 'redirect_url', true );
+        $redirect_url = get_post_meta( $post_id, 'redirect_url', true );
 
-              if($redirect_url) {
-                $new_url = str_replace($site_url, '', get_the_permalink());
-                $this->results_array[] = array(
-                      // Redirect URL
-                      'old_url'  => $redirect_url,
-                      // Page URL
-                      'new_url'        =>  $new_url,
-                      // Post ID
-                      'id'            => $post_id
-                  );
-              }
-            }
+        if($redirect_url) {
+          $new_url = str_replace($site_url, '', get_the_permalink());
+          $this->results_array[] = array(
+            // Redirect URL
+            'old_url'  => $redirect_url,
+            // Page URL
+            'new_url'        =>  $new_url,
+            // Post ID
+            'id'            => $post_id
+          );
+        }
+      }
     }
     // Prevent protected variables being returned
     unset($this->search_order);
