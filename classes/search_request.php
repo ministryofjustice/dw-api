@@ -110,7 +110,7 @@ class search_request extends api_request {
 		}
 
 		$query_date = $this->data['date']?:($this->fallback_date!='today'?$this->fallback_date:date('Y-m-d'));
-		if(!is_array($query_date)) {
+		if(!is_array($query_date) && $this->fallback_date!='today') {
 			$date_args = $this::parse_date($query_date);
 			$date_query = $date_args;
 		}
