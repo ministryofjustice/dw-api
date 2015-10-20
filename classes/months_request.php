@@ -22,7 +22,13 @@ class months_request extends search_request {
 	protected $post_type  = 'event';
   protected $date_query_target = array('_event-start-date', '_event-end-date');
   // If array, first arg is start date, second arg is months later
-  protected $fallback_date = array('today','12');
+
+
+  function __construct($param_array) {
+    $this->fallback_date = array(date('Y-m-01'),'11');
+
+    parent::__construct($param_array);
+  }
 
   function generate_json($results = array()) {
 

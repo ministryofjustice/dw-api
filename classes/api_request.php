@@ -11,6 +11,11 @@ class api_request {
     public static $params;
     protected $data;
 
+    function __construct($param_array) {
+      // Setup vars from url params
+      $this->set_params($param_array);
+    }
+
     /**
      *
      * Sets variables based on $params and query_vars
