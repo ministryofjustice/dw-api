@@ -44,6 +44,7 @@ class children_request extends api_request {
     }
 
     $subpages = new WP_Query($subpages_args);
+    // Debug::full($subpages->request);
     $this->results_array['total_results'] = (int) $subpages->found_posts;
 
     if ($subpages->have_posts()) {
@@ -58,7 +59,7 @@ class children_request extends api_request {
     // End JSON
 
     // Force alpha sort on results
-    usort($this->results_array['results'],array($this,'sort_by_title'));
+    // usort($this->results_array['results'],array($this,'sort_by_title'));
 
     return($this->results_array);
   }
