@@ -71,7 +71,7 @@
          * @since 1.0
          */
         private function plugin_classes() {
-          $api_classes = array('api','search','children','az','news','crawl','events','months');
+          $api_classes = array('api','search','children','az','news','crawl','events','months','post');
           foreach ($api_classes as $api_class) {
             $class_definitions[$api_class.'_request'] = DWAPI_PATH . 'classes/'.$api_class.'_request.php';
           }
