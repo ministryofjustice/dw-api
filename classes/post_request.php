@@ -35,21 +35,37 @@ class post_request extends search_request {
 	      $thumbnail = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
 	      $alt_text = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
 
+				if(function_exists('get_coauthors')) {
+					$authors_array = get_coauthors();
+				} else {
+					$authors_array = get_the_author_meta();
+				}
+				$authors = null;
+				foreach($authors_array as $author) {
+					$authors[] = array(
+						'id'            => $author->data->ID,
+						'name'          => $author->data->display_name,
+						'thumbnail_url' => get_avatar_url($author->data->ID)
+					);
+				}
+
 	     	$this->results_array['results'][] = array(
 	        // Page Title
-	        'title' 			=>  (string) get_the_title(),
+	        'title' 		         => (string) get_the_title(),
 	        // Page URL
-	        'url'   			=>  (string) get_the_permalink(),
+	        'url'   			       => (string) get_the_permalink(),
 	        // Page Slug
-	        'slug'  			=>  (string) $post->post_name,
+	        'slug'  			       => (string) $post->post_name,
 	        // Page Excerpt
-	        'excerpt'   		=>  (string)  get_the_excerpt(),
+	        'excerpt'   		     => (string) get_the_excerpt(),
 	        // Featured Image
-	        'thumbnail_url' =>  (string) $thumbnail[0],
+	        'thumbnail_url'      => (string) $thumbnail[0],
 	        // Thumbnail Alt Text
 	        'thumbnail_alt_text' => (string) $alt_text,
 	        // Timestamp
-	        'timestamp'			=>	(string) get_the_time('Y-m-d H:m:s'),
+	        'timestamp'			     =>	(string) get_the_time('Y-m-d H:m:s'),
+					// Author(s)
+					'authors'            => $authors
 	      );
 	    }
 		}
