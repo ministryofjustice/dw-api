@@ -37,15 +37,19 @@ class post_request extends search_request {
 
 				if(function_exists('get_coauthors')) {
 					$authors_array = get_coauthors();
+					$authors = null;
+					foreach($authors_array as $author) {
+						$authors[] = array(
+							'id'            => $author->data->ID,
+							'name'          => $author->data->display_name,
+							'thumbnail_url' => get_avatar_url($author->data->ID)
+						);
+					}
 				} else {
-					$authors_array = get_the_author_meta();
-				}
-				$authors = null;
-				foreach($authors_array as $author) {
-					$authors[] = array(
-						'id'            => $author->data->ID,
-						'name'          => $author->data->display_name,
-						'thumbnail_url' => get_avatar_url($author->data->ID)
+					$authors = array(
+						'id'            => get_the_author_meta('ID',$post->ID),
+						'name'          => get_the_author_meta('display_name',$post->ID),
+						'thumbnail_url' => get_avatar_url(get_the_author_meta('ID',$post->ID))
 					);
 				}
 
