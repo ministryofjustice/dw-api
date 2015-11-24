@@ -46,7 +46,7 @@ class post_request extends search_request {
 						} else {
 							$author_name = $author->display_name;
 							$author_thumb_id = get_post_thumbnail_id($author_id);
-							$author_thumb = wp_get_attachment_image_src($author_thumb_id, 'thumbnail')[0];
+							$author_thumb = wp_get_attachment_image_src($author_thumb_id, 'user-thumb')[0];
 						}
 						$authors[] = array(
 							// 'all_data' => $author,
