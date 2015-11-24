@@ -39,10 +39,20 @@ class post_request extends search_request {
 					$authors_array = get_coauthors();
 					$authors = null;
 					foreach($authors_array as $author) {
+						$author_id = (int) $author->ID;
+						if($author->data) {
+							$author_name = $author->data->display_name;
+							$author_thumb = get_avatar_url($author_id);
+						} else {
+							$author_name = $author->display_name;
+							$author_thumb_id = get_post_thumbnail_id($author_id);
+							$author_thumb = wp_get_attachment_image_src($author_thumb_id, 'thumbnail')[0];
+						}
 						$authors[] = array(
-							'id'            => $author->data->ID,
-							'name'          => $author->data->display_name,
-							'thumbnail_url' => get_avatar_url($author->data->ID)
+							// 'all_data' => $author,
+							'id'            => $author_id,
+							'name'          => $author_name,
+							'thumbnail_url' => $author_thumb
 						);
 					}
 				} else {
