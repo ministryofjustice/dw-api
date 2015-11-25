@@ -31,22 +31,15 @@ class post_request extends search_request {
 	    $last_post = false;
 	    while ($results->have_posts()) {
 	    	$results->the_post();
-	      $thumbnail_id = get_post_thumbnail_id($post->ID);
+				$post_id = $results->post->ID;
+	      $thumbnail_id = get_post_thumbnail_id($post_id);
 	      $thumbnail = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
 	      $alt_text = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
 
-				if(function_exists('get_coauthors')) {
-					$authors_array = get_coauthors();
+				if (function_exists('dw_get_author_info')) {
+					$authors = dw_get_author_info($post_id);
 				} else {
-					$authors_array = get_the_author_meta();
-				}
-				$authors = null;
-				foreach($authors_array as $author) {
-					$authors[] = array(
-						'id'            => $author->data->ID,
-						'name'          => $author->data->display_name,
-						'thumbnail_url' => get_avatar_url($author->data->ID)
-					);
+					$authors = array();
 				}
 
 	     	$this->results_array['results'][] = array(
