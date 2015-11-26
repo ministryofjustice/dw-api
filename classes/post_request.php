@@ -36,17 +36,7 @@ class post_request extends search_request {
 	      $alt_text = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
 
 				if(function_exists('get_coauthors')) {
-					$authors_array = get_coauthors();
-				} else {
-					$authors_array = get_the_author_meta();
-				}
-				$authors = null;
-				foreach($authors_array as $author) {
-					$authors[] = array(
-						'id'            => $author->data->ID,
-						'name'          => $author->data->display_name,
-						'thumbnail_url' => get_avatar_url($author->data->ID)
-					);
+					$authors = dw_get_author_info($post->ID);
 				}
 
 	     	$this->results_array['results'][] = array(
