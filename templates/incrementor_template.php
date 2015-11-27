@@ -55,7 +55,6 @@ class incrementor extends api_request {
       $update_status = update_post_meta( $this->data['id'], $meta_key, $count+1, $count );
       $count = get_post_meta( $this->data['id'], $meta_key, true )?:0;
       $this->results_array = array(
-        "status" => (bool) $update_status,
         "count" => (int) $count,
         "nonce" => $nonce
       );
