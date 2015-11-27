@@ -16,6 +16,8 @@ class incrementor extends api_request {
   function __construct($param_array) {
     parent::__construct($param_array);
 
+    $this->results_array['controls']['suppress_results_summary'] = self::$suppress_results_summary;
+
     $request_method = $_SERVER['REQUEST_METHOD'];
 
     if($this->endpoint==null) {
@@ -41,9 +43,9 @@ class incrementor extends api_request {
   function generate_json() {
     $meta_key = self::$namespace . $this->endpoint;
     $count = get_post_meta( $this->data['id'], $meta_key, true )?:0;
-    $this->results_array = array(
+    $this->results_array = array_merge($this->results_array,array(
       "count" => (int) $count
-    );
+    ));
   }
 
   function process_request() {

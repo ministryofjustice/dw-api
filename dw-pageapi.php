@@ -157,7 +157,7 @@
                 "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
               );
             }
-            $this->output_json($results,$suppress_results_summary);
+            $this->output_json($results);
             wp_reset_query();
             exit;
           }
@@ -189,10 +189,12 @@
          * @since 1.0
          */
         function output_json($json_array) {
+          $suppress_results_summary = $json_array->results_array['controls']['suppress_results_summary'];
+          unset($json_array->results_array['controls']);
           $status = $json_array->results_array['status'];
           if (!is_null($status)) {
             http_response_code($status);
-          } elseif (empty($json_array->results_array['results']) && $this->suppress_results_summary) {
+          } elseif (empty($json_array->results_array['results']) && !$suppress_results_summary) {
             $json_array->results_array['total_results'] = 0;
             $json_array->results_array['results'] = array();
           }
