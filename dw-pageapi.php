@@ -33,7 +33,8 @@
   0.12   - modify children_request to ignore text before colon in title
   0.13   - added event_request class to handle event search requests
   0.14   - added months_class to return count of posts by month (up to 12 months from current date)
-  0.15   - added incrementor template and likes_request endpoint
+  0.15   - added post_request class to return blog posts
+  0.16   - added incrementor template and likes_request endpoint
  */
 
   if (!defined('ABSPATH')) {
@@ -72,7 +73,8 @@
          * @since 1.0
          */
         private function plugin_classes() {
-          $api_classes = array('search','children','az','news','crawl','events','months','likes');
+          $api_classes = array('search','children','az','news','crawl','events','months','likes','post');
+
           foreach ($api_classes as $api_class) {
             $class_definitions[$api_class.'_request'] = DWAPI_PATH . 'classes/'.$api_class.'_request.php';
           }

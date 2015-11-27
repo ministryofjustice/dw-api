@@ -16,6 +16,8 @@ The default root is _service_ but this can be changed in the code by altering th
 
 * news/{type}/{category}/{plus+seperated+keywords}/{initial}/{page}/{per-page} - retrieve news items
 
+* post/{type}/{category}/{plus+seperated+keywords}/{initial}/{page}/{per-page} - retrieve blog posts
+
 * search/{type}/{category}/{plus+seperated+keywords}/{page}/{per-page} - searches all site content
 
 * events/{date}/{keywords}/{page}/{per-page} - searches events
@@ -35,6 +37,8 @@ You can use the plugin within by PHP as follows:
 
 * $news = new news_request ({type},{category},{plus+seperated+keywords},{initial},{page},{per-page})
 
+* $posts = new post_request ({type},{category},{plus+seperated+keywords},{initial},{page},{per-page})
+
 * $search = new search_request ({type},{category},{plus+seperated+keywords},{page},{per-page})
 
 * $events = new events_request ({date},{keywords},{page},{per-page})
@@ -47,7 +51,9 @@ You can use the plugin within by PHP as follows:
 
 ##Release history
 
-0.15   - added incrementor template and likes_request endpoint
+0.16   - added incrementor template and likes_request endpoint
+
+0.15   - added post_request class to return blog posts
 
 0.14   - added months_class to return count of posts by month (up to 12 months from current date)
 
