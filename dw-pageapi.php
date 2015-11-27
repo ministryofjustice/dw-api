@@ -4,7 +4,7 @@
   Plugin Name: DW API
   Description: An API that allows you to query the WordPress page structure
   Author: Ryan Jarrett
-  Version: 0.14
+  Version: 0.15
   Author URI: http://sparkdevelopment.co.uk
 
   Changelog
@@ -33,6 +33,7 @@
   0.12   - modify children_request to ignore text before colon in title
   0.13   - added event_request class to handle event search requests
   0.14   - added months_class to return count of posts by month (up to 12 months from current date)
+  0.15   - added incrementor template and likes_request endpoint
  */
 
   if (!defined('ABSPATH')) {
@@ -50,7 +51,7 @@
         /**
          * @var string
          */
-        public $version = '0.14';
+        public $version = '0.15';
 
         /**
          * Define DW API constants
@@ -71,7 +72,7 @@
          * @since 1.0
          */
         private function plugin_classes() {
-          $api_classes = array('api','search','children','az','news','crawl','events','months');
+          $api_classes = array('search','children','az','news','crawl','events','months','likes');
           foreach ($api_classes as $api_class) {
             $class_definitions[$api_class.'_request'] = DWAPI_PATH . 'classes/'.$api_class.'_request.php';
           }
@@ -156,7 +157,7 @@
                 "more_info" => "https://github.com/ministryofjustice/dw-api/blob/master/README.md"
               );
             }
-            $this->output_json($results);
+            $this->output_json($results,$suppress_results_summary);
             wp_reset_query();
             exit;
           }
@@ -168,12 +169,18 @@
          * @since 1.0
          */
         private function includes() {
+          require_once DWAPI_PATH . 'classes/api_request.php';
+
+          foreach (glob(DWAPI_PATH.'templates/*.php') as $filename) {
+            require_once $filename;
+          }
 
           foreach ($this->plugin_classes() as $id => $path) {
             if (is_readable($path) && !class_exists($id)) {
               require_once $path;
             }
           }
+
         }
 
         /**
@@ -185,7 +192,7 @@
           $status = $json_array->results_array['status'];
           if (!is_null($status)) {
             http_response_code($status);
-          } elseif (empty($json_array->results_array['results'])) {
+          } elseif (empty($json_array->results_array['results']) && $this->suppress_results_summary) {
             $json_array->results_array['total_results'] = 0;
             $json_array->results_array['results'] = array();
           }

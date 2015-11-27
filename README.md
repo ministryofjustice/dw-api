@@ -24,6 +24,8 @@ The default root is _service_ but this can be changed in the code by altering th
 
 * crawl/ - returns pages that have a redirect url
 
+* likes/{post_id} - increment like counter for that post (any type)
+
 ##Direct use
 You can use the plugin within by PHP as follows:
 
@@ -41,7 +43,11 @@ You can use the plugin within by PHP as follows:
 
 * $crawl = new crawl_request
 
+* $likes = new likes_request ({post-id})
+
 ##Release history
+
+0.15   - added incrementor template and likes_request endpoint
 
 0.14   - added months_class to return count of posts by month (up to 12 months from current date)
 
