@@ -199,6 +199,15 @@
             $json_array->results_array['results'] = array();
           }
           if(!$_GET['debug']) {
+            $request_method = $_SERVER['REQUEST_METHOD'];
+            switch ($request_method) {
+              case 'GET':
+                http_response_code(200);
+                break;
+              case 'POST':
+                http_response_code(201);
+                break;
+            }
             header('Content-Type: application/json');
             header('Cache-Control: public, max-age=30');
             header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30));
