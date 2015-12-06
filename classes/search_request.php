@@ -237,6 +237,19 @@ class search_request extends api_request {
 			$this->results_array['url_params'][$param] = $this->data[$param];
 		}
 
+		// Set up Did You Mean?
+		ob_start();
+
+		if (function_exists('relevanssi_didyoumean')) {
+			relevanssi_didyoumean($this->rawurldecode($this->data['keywords']), "", "", 5);
+		}
+
+		preg_match("/<a(.*)>(.*)<\/a>/", ob_get_clean(), $did_you_mean_matches);
+
+		$did_you_mean = $did_you_mean_matches[2];
+
+		$this->results_array['did_you_mean'] = $did_you_mean;
+
 		if ($results->have_posts()) {
 
 			// Total posts
@@ -283,6 +296,8 @@ class search_request extends api_request {
 					'file_pages' => (int) 0,
 					// Result category
 					'content_type' => $titles,
+					// Did You Mean suggestions
+					'did_you_mean' => (string) $did_you_mean,
 				);
 			}
 		}
