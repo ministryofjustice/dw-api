@@ -10,12 +10,14 @@ class api_request {
     public $results_array = array();
     public static $params;
     public static $suppress_results_summary = false;
+    public static $timeout = 30;
     protected $data;
 
     function __construct($param_array) {
       // Setup vars from url params
       $this->set_params($param_array);
       $this->results_array['controls']['suppress_results_summary'] = self::$suppress_results_summary;
+      $this->results_array['controls']['timeout'] = self::$timeout;
     }
 
     /**

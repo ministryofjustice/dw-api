@@ -192,6 +192,7 @@
          */
         function output_json($json_array) {
           $suppress_results_summary = $json_array->results_array['controls']['suppress_results_summary'];
+          $timeout = isset($json_array->results_array['controls']['timeout'])?$json_array->results_array['controls']['timeout']:30;
           unset($json_array->results_array['controls']);
           $status = $json_array->results_array['status'];
           if (!is_null($status)) {
@@ -211,9 +212,16 @@
                 break;
             }
             header('Content-Type: application/json');
-            header('Cache-Control: public, max-age=30');
-            header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30));
-            header_remove("Pragma");
+
+            if($timeout) {
+              header('Cache-Control: public, max-age=' . $timeout);
+              header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + ($cache_timeout?:60)));
+              header_remove("Pragma");
+            } else {
+              header('Cache-Control: private, max-age=0, no-cache');
+              header("Pragma: no-cache");
+              header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() - 60));
+            }
             echo json_encode($json_array->results_array);
           } else {
             Debug::full($json_array->results_array);
