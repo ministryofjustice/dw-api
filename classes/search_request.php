@@ -273,6 +273,9 @@ class search_request extends api_request {
 					$titles[] = ucfirst($post->post_type);
 				}
 
+				// Remove excerpt if content-type is document
+				$excerpt = in_array('Document', $titles)?"":$post->post_excerpt;
+
 				$this->results_array['results'][] = array(
 					// Page Title
 					'title' => (string) $post->post_title,
@@ -281,7 +284,7 @@ class search_request extends api_request {
 					// Page Slug
 					'slug' => (string) $post->post_name,
 					// Page Excerpt
-					'excerpt' => (string) $post->post_excerpt,
+					'excerpt' => (string) $excerpt,
 					// Featured Image
 					'thumbnail_url' => (string) $thumbnail[0],
 					// Timestamp
