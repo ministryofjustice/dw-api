@@ -229,7 +229,9 @@ class search_request extends api_request {
 	}
 
 	function generate_json($results = array()) {
-		global $post;
+		global $post, $wp_query;
+
+		$wp_query = $results;
 
 		// Start JSON
 		// URL parameters
@@ -242,7 +244,7 @@ class search_request extends api_request {
 			// Total posts
 			$this->results_array['total_results'] = (int) $results->found_posts;
 
-			if($this->results_array['total_results']<=5) {
+			if($this->results_array['total_results']<=500) {
 				$this->results_array['did_you_mean'] = $this->get_didyoumean($this->rawurldecode($this->data['keywords']));
 			}
 
@@ -305,7 +307,7 @@ class search_request extends api_request {
 
 	function get_didyoumean($keywords) {
 		if (function_exists('relevanssi_didyoumean')) {
-			$didyoumean_output = relevanssi_didyoumean($keywords, "", "", 5, false);
+			$didyoumean_output = relevanssi_didyoumean($keywords, "", "", 500, false);
 		}
 		preg_match("/<a(.*)>(.*)<\/a>/", $didyoumean_output, $did_you_mean_matches);
 		return $did_you_mean_matches[2];
