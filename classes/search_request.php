@@ -237,23 +237,14 @@ class search_request extends api_request {
 			$this->results_array['url_params'][$param] = $this->data[$param];
 		}
 
-		// Set up Did You Mean?
-		ob_start();
-
-		if (function_exists('relevanssi_didyoumean')) {
-			relevanssi_didyoumean($this->rawurldecode($this->data['keywords']), "", "", 5);
-		}
-
-		preg_match("/<a(.*)>(.*)<\/a>/", ob_get_clean(), $did_you_mean_matches);
-
-		$did_you_mean = $did_you_mean_matches[2];
-
-		$this->results_array['did_you_mean'] = $did_you_mean;
-
 		if ($results->have_posts()) {
 
 			// Total posts
 			$this->results_array['total_results'] = (int) $results->found_posts;
+
+			if($this->results_array['total_results']<=5) {
+				$this->results_array['did_you_mean'] = $this->get_didyoumean($this->rawurldecode($this->data['keywords']));
+			}
 
 			$last_post = false;
 			while ($results->have_posts()) {
@@ -298,17 +289,26 @@ class search_request extends api_request {
 					// File pages
 					'file_pages' => (int) 0,
 					// Result category
-					'content_type' => $titles,
-					// Did You Mean suggestions
-					'did_you_mean' => (string) $did_you_mean,
+					'content_type' => $titles
 				);
 			}
+		} else {
+			$this->results_array['did_you_mean'] = $this->get_didyoumean($this->rawurldecode($this->data['keywords']));
 		}
+
 		// Prevent protected variables being returned
 		unset($this->search_order);
 		unset($this->search_orderby);
 		unset($this->post_type);
 		unset($this->data);
+	}
+
+	function get_didyoumean($keywords) {
+		if (function_exists('relevanssi_didyoumean')) {
+			$didyoumean_output = relevanssi_didyoumean($keywords, "", "", 5, false);
+		}
+		preg_match("/<a(.*)>(.*)<\/a>/", $didyoumean_output, $did_you_mean_matches);
+		return $did_you_mean_matches[2];
 	}
 }
 
